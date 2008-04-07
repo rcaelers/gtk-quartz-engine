@@ -1,5 +1,12 @@
 2008-04-07  Richard Hult  <richard@imendio.com>
 
+	* src/quartz-rc-style.h:
+	* src/quartz-style.c:
+	* src/quartz-style.h:
+	* src/test.c: More style fixes.
+
+2008-04-07  Richard Hult  <richard@imendio.com>
+
 	* src/quartz-draw.c:
 	* src/quartz-style.c: Coding style fixes.
 

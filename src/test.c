@@ -9,9 +9,9 @@ main (int argc, char **argv)
 
   window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   g_signal_connect (window,
-		    "destroy",
-		    G_CALLBACK (gtk_main_quit),
-		    NULL);
+                    "destroy",
+                    G_CALLBACK (gtk_main_quit),
+                    NULL);
 
   if (1)
     {
@@ -23,7 +23,7 @@ main (int argc, char **argv)
       gtk_box_pack_start (GTK_BOX (vbox), entry, FALSE, FALSE, 0);
 
       button = gtk_button_new_with_label ("Quit");
-      g_signal_connect (button, 
+      g_signal_connect (button,
                         "clicked",
                         G_CALLBACK (gtk_main_quit),
                         NULL);

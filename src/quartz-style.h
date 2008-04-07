@@ -42,6 +42,6 @@ struct _QuartzStyleClass
 };
 
 void quartz_style_register_type (GTypeModule *module);
-void quartz_style_init (void);
+void quartz_style_init          (void);
 
 #endif /* QUARTZ_STYLE_H */

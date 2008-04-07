@@ -239,23 +239,23 @@ style_setup_rc_styles (void)
 
   /* TreeView column header (button). */
   str = g_strdup_printf ("style \"quartz-tree-header\" = \"quartz-default\"\n"
-			 "{\n"
-			 "font_name = \"%s\"\n"
-			 "GtkWidget::focus-line-width = 0\n"
-			 "GtkWidget::draw-border = { 1, 1, 1, 1 }\n"
-			 "GtkButton::inner-border = { 3, 3, 1, 3 }\n"
-			 "}widget_class \"*.GtkTreeView.*Button*\" style \"quartz-tree-header\"\n"
-			 "widget_class \"*.GtkCTree.*Button*\" style \"quartz-tree-header\"\n",
-			 "Lucida Grande 11");
+                         "{\n"
+                         "font_name = \"%s\"\n"
+                         "GtkWidget::focus-line-width = 0\n"
+                         "GtkWidget::draw-border = { 1, 1, 1, 1 }\n"
+                         "GtkButton::inner-border = { 3, 3, 1, 3 }\n"
+                         "}widget_class \"*.GtkTreeView.*Button*\" style \"quartz-tree-header\"\n"
+                         "widget_class \"*.GtkCTree.*Button*\" style \"quartz-tree-header\"\n",
+                         "Lucida Grande 11");
   gtk_rc_parse_string (str);
   g_free (str);
 
   /* TreeView font. */
   str = g_strdup_printf ("style \"quartz-tree-row\" = \"quartz-default\"\n"
-			 "{\n"
-			 "font_name = \"%s\"\n"
-			 "}widget_class \"*.GtkTreeView\" style \"quartz-tree-row\"\n",
-			 "Lucida Grande 11");
+                         "{\n"
+                         "font_name = \"%s\"\n"
+                         "}widget_class \"*.GtkTreeView\" style \"quartz-tree-row\"\n",
+                         "Lucida Grande 11");
   gtk_rc_parse_string (str);
   g_free (str);
 
@@ -550,10 +550,10 @@ draw_box (GtkStyle      *style,
         return;
 
       HIThemeDrawButton (&rect,
-			 &draw_info,
-			 context,
-			 kHIThemeOrientationNormal,
-			 NULL);
+                         &draw_info,
+                         context,
+                         kHIThemeOrientationNormal,
+                         NULL);
 
       gdk_quartz_drawable_release_context (GDK_WINDOW_OBJECT (window)->impl, context);
 
@@ -562,7 +562,7 @@ draw_box (GtkStyle      *style,
   else if (IS_DETAIL (detail, "button") || IS_DETAIL (detail, "buttondefault"))
     {
       if (GTK_IS_TREE_VIEW (widget->parent) || GTK_IS_CLIST (widget->parent))
-	{
+        {
           /* FIXME: refactor so that we can share this code with
            * normal buttons.
            */
@@ -603,9 +603,9 @@ draw_box (GtkStyle      *style,
           gdk_quartz_drawable_release_context (GDK_WINDOW_OBJECT (window)->impl, context);
 
           return;
-	}
+        }
       else /* Normal button. */
-	{
+        {
           ThemeButtonKind kind;
 
           if (is_path_bar_button (widget) || is_icon_only_button (widget))
@@ -631,7 +631,7 @@ draw_box (GtkStyle      *style,
                               x, y,
                               width, height);
           return;
-	}
+        }
     }
   else if (IS_DETAIL (detail, "toolbar"))
     {
@@ -742,11 +742,11 @@ draw_box (GtkStyle      *style,
       draw_info.itemType |= kThemeMenuItemPopUpBackground;
 
       if (state_type == GTK_STATE_INSENSITIVE)
-	draw_info.state = kThemeMenuDisabled;
+        draw_info.state = kThemeMenuDisabled;
       else if (state_type == GTK_STATE_PRELIGHT)
-	draw_info.state = kThemeMenuSelected;
+        draw_info.state = kThemeMenuSelected;
       else
-	draw_info.state = kThemeMenuActive;
+        draw_info.state = kThemeMenuActive;
 
       item_rect = CGRectMake (x, y, width, height);
 
@@ -1038,22 +1038,22 @@ draw_check (GtkStyle      *style,
       // FIXME: might want this? kThemeAdornmentDrawIndicatorOnly
 
       if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget)))
-	draw_info.value = kThemeButtonOn;
+        draw_info.value = kThemeButtonOn;
       else
-	draw_info.value = kThemeButtonOff;
+        draw_info.value = kThemeButtonOff;
 
       if (state_type == GTK_STATE_ACTIVE)
-	draw_info.state = kThemeStatePressed;
+        draw_info.state = kThemeStatePressed;
       else if (state_type == GTK_STATE_INSENSITIVE)
-	draw_info.state = kThemeStateInactive;
+        draw_info.state = kThemeStateInactive;
       else
-	draw_info.state = kThemeStateActive;
+        draw_info.state = kThemeStateActive;
 
       if (GTK_WIDGET_HAS_FOCUS (widget))
-	draw_info.adornment |= kThemeAdornmentFocus;
+        draw_info.adornment |= kThemeAdornmentFocus;
 
       if (IS_DETAIL (detail, "buttondefault"))
-	draw_info.adornment |= kThemeAdornmentDefault;
+        draw_info.adornment |= kThemeAdornmentDefault;
 
       rect = CGRectMake (x, y+1, width, height);
 
@@ -1062,10 +1062,10 @@ draw_check (GtkStyle      *style,
         return;
 
       HIThemeDrawButton (&rect,
-			 &draw_info,
-			 context,
-			 kHIThemeOrientationNormal,
-			 NULL);
+                         &draw_info,
+                         context,
+                         kHIThemeOrientationNormal,
+                         NULL);
 
       gdk_quartz_drawable_release_context (GDK_WINDOW_OBJECT (window)->impl, context);
 
@@ -1102,22 +1102,22 @@ draw_option (GtkStyle      *style,
       draw_info.adornment = kThemeAdornmentNone;
 
       if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget)))
-	draw_info.value = kThemeButtonOn;
+        draw_info.value = kThemeButtonOn;
       else
-	draw_info.value = kThemeButtonOff;
+        draw_info.value = kThemeButtonOff;
 
       if (state_type == GTK_STATE_ACTIVE)
-	draw_info.state = kThemeStatePressed;
+        draw_info.state = kThemeStatePressed;
       else if (state_type == GTK_STATE_INSENSITIVE)
-	draw_info.state = kThemeStateInactive;
+        draw_info.state = kThemeStateInactive;
       else
-	draw_info.state = kThemeStateActive;
+        draw_info.state = kThemeStateActive;
 
       if (GTK_WIDGET_HAS_FOCUS (widget))
-	draw_info.adornment |= kThemeAdornmentFocus;
+        draw_info.adornment |= kThemeAdornmentFocus;
 
       if (IS_DETAIL (detail, "buttondefault"))
-	draw_info.adornment |= kThemeAdornmentDefault;
+        draw_info.adornment |= kThemeAdornmentDefault;
 
       rect = CGRectMake (x, y, width, height);
 
@@ -1126,10 +1126,10 @@ draw_option (GtkStyle      *style,
         return;
 
       HIThemeDrawButton (&rect,
-			 &draw_info,
-			 context,
-			 kHIThemeOrientationNormal,
-			 NULL);
+                         &draw_info,
+                         context,
+                         kHIThemeOrientationNormal,
+                         NULL);
 
       gdk_quartz_drawable_release_context (GDK_WINDOW_OBJECT (window)->impl, context);
 
@@ -1156,17 +1156,17 @@ draw_tab (GtkStyle      *style,
 
 static void
 draw_extension (GtkStyle        *style,
-		GdkWindow       *window,
-		GtkStateType     state_type,
-		GtkShadowType    shadow_type,
-		GdkRectangle    *area,
-		GtkWidget       *widget,
-		const gchar     *detail,
-		gint             x,
-		gint             y,
-		gint             width,
-		gint             height,
-		GtkPositionType  gap_side)
+                GdkWindow       *window,
+                GtkStateType     state_type,
+                GtkShadowType    shadow_type,
+                GdkRectangle    *area,
+                GtkWidget       *widget,
+                const gchar     *detail,
+                gint             x,
+                gint             y,
+                gint             width,
+                gint             height,
+                GtkPositionType  gap_side)
 {
   DEBUG_DRAW;
   if (widget
@@ -1233,8 +1233,8 @@ draw_extension (GtkStyle        *style,
 
   return;
   parent_class->draw_extension (style, window, state_type,
-				shadow_type, area, widget, detail,
-				x, y, width, height, gap_side);
+                                shadow_type, area, widget, detail,
+                                x, y, width, height, gap_side);
 }
 
 static void
@@ -1315,9 +1315,9 @@ draw_flat_box (GtkStyle      *style,
       draw_info.version = 0;
       draw_info.kind = kHIThemeFrameTextFieldSquare;
       if (state_type == GTK_STATE_INSENSITIVE)
-	draw_info.state = kThemeStateInactive;
+        draw_info.state = kThemeStateInactive;
       else
-	draw_info.state = kThemeStateActive;
+        draw_info.state = kThemeStateActive;
       draw_info.isFocused = GTK_WIDGET_HAS_FOCUS (widget);
 
       gtk_widget_style_get (widget,
@@ -1332,9 +1332,9 @@ draw_flat_box (GtkStyle      *style,
         return;
 
       HIThemeDrawFrame (&rect,
-			&draw_info,
-			context,
-			kHIThemeOrientationNormal);
+                        &draw_info,
+                        context,
+                        kHIThemeOrientationNormal);
 
       gdk_quartz_drawable_release_context (GDK_WINDOW_OBJECT (window)->impl, context);
 
@@ -1449,9 +1449,9 @@ draw_shadow (GtkStyle      *style,
       draw_info.version = 0;
       draw_info.kind = kHIThemeFrameListBox;
       if (state_type == GTK_STATE_INSENSITIVE)
-	draw_info.state = kThemeStateInactive;
+        draw_info.state = kThemeStateInactive;
       else
-	draw_info.state = kThemeStateActive;
+        draw_info.state = kThemeStateActive;
       draw_info.isFocused = GTK_WIDGET_HAS_FOCUS (widget);
 
       rect = CGRectMake (x, y, width, height);
@@ -1461,9 +1461,9 @@ draw_shadow (GtkStyle      *style,
         return;
 
       HIThemeDrawFrame (&rect,
-			&draw_info,
-			context,
-			kHIThemeOrientationNormal);
+                        &draw_info,
+                        context,
+                        kHIThemeOrientationNormal);
 
       gdk_quartz_drawable_release_context (GDK_WINDOW_OBJECT (window)->impl, context);
 
@@ -1479,9 +1479,9 @@ draw_shadow (GtkStyle      *style,
       draw_info.version = 0;
       draw_info.kind = kHIThemeFrameListBox;
       if (state_type == GTK_STATE_INSENSITIVE)
-	draw_info.state = kThemeStateInactive;
+        draw_info.state = kThemeStateInactive;
       else
-	draw_info.state = kThemeStateActive;
+        draw_info.state = kThemeStateActive;
       draw_info.isFocused = GTK_WIDGET_HAS_FOCUS (widget);
 
       rect = CGRectMake (x, y, width, height);
@@ -1491,9 +1491,9 @@ draw_shadow (GtkStyle      *style,
         return;
 
       HIThemeDrawFrame (&rect,
-			&draw_info,
-			context,
-			kHIThemeOrientationNormal);
+                        &draw_info,
+                        context,
+                        kHIThemeOrientationNormal);
 
       gdk_quartz_drawable_release_context (GDK_WINDOW_OBJECT (window)->impl, context);
 
@@ -1535,19 +1535,19 @@ draw_shadow (GtkStyle      *style,
 
 static void
 draw_shadow_gap (GtkStyle        *style,
-		 GdkWindow       *window,
-		 GtkStateType     state_type,
-		 GtkShadowType    shadow_type,
-		 GdkRectangle    *area,
-		 GtkWidget       *widget,
-		 const gchar     *detail,
-		 gint             x,
-		 gint             y,
-		 gint             width,
-		 gint             height,
-		 GtkPositionType  gap_side,
-		 gint             gap_x,
-		 gint             gap_width)
+                 GdkWindow       *window,
+                 GtkStateType     state_type,
+                 GtkShadowType    shadow_type,
+                 GdkRectangle    *area,
+                 GtkWidget       *widget,
+                 const gchar     *detail,
+                 gint             x,
+                 gint             y,
+                 gint             width,
+                 gint             height,
+                 GtkPositionType  gap_side,
+                 gint             gap_x,
+                 gint             gap_width)
 {
   DEBUG_DRAW;
 
@@ -1586,11 +1586,11 @@ draw_hline (GtkStyle     *style,
       draw_info.itemType |= kThemeMenuItemPopUpBackground;
 
       if (state_type == GTK_STATE_INSENSITIVE)
-	draw_info.state = kThemeMenuDisabled;
+        draw_info.state = kThemeMenuDisabled;
       else if (state_type == GTK_STATE_PRELIGHT)
-	draw_info.state = kThemeMenuSelected;
+        draw_info.state = kThemeMenuSelected;
       else
-	draw_info.state = kThemeMenuActive;
+        draw_info.state = kThemeMenuActive;
 
       item_rect = CGRectMake (x1, y, x2-x1, height);
 
@@ -1877,10 +1877,10 @@ quartz_style_register_type (GTypeModule * module)
     (GBaseInitFunc) NULL,
     (GBaseFinalizeFunc) NULL,
     (GClassInitFunc) quartz_style_class_init,
-    NULL,			/* class_finalize */
-    NULL,			/* class_data */
+    NULL,                       /* class_finalize */
+    NULL,                       /* class_data */
     sizeof (QuartzStyle),
-    0,			/* n_preallocs */
+    0,                  /* n_preallocs */
     (GInstanceInitFunc) NULL,
   };
 

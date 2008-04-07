@@ -34,8 +34,8 @@ extern GType quartz_type_rc_style;
 struct _QuartzRcStyle
 {
   GtkRcStyle parent_instance;
-  
-	//GList *img_list;
+
+        //GList *img_list;
 };
 
 struct _QuartzRcStyleClass

@@ -1,2 +1,8 @@
+2008-04-07  Richard Hult  <richard@imendio.com>
+
+	* src/quartz-style.c: (draw_arrow): Fix typo, makes arrowing
+	drawing work.
+
 2007-04-07  Alberto Ruiz <aruiz@gnome.org>
-	* Initial commit
+
+	* Initial commit.

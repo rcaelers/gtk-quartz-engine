@@ -385,7 +385,7 @@ draw_arrow (GtkStyle      *style,
 
   HIThemeDrawPopupArrow (&rect, &arrow_info, context, kHIThemeOrientationNormal);
 
-  gdk_quartz_drawable_release_context (GDK_WINDOW_OBJECT (window)->impl, FALSE);
+  gdk_quartz_drawable_release_context (GDK_WINDOW_OBJECT (window)->impl, context);
   return;  
 }
 

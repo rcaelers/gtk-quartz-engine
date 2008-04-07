@@ -1,5 +1,10 @@
 2008-04-07  Richard Hult  <richard@imendio.com>
 
+	* src/quartz-draw.c:
+	* src/quartz-style.c: Coding style fixes.
+
+2008-04-07  Richard Hult  <richard@imendio.com>
+
 	* src/quartz-style.c: (draw_arrow): Fix typo, makes arrowing
 	drawing work.
 

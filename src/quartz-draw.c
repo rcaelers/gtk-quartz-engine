@@ -27,8 +27,8 @@ void         gdk_quartz_drawable_release_context (GdkDrawable  *drawable,
                                                   CGContextRef  context);
 
 static void
-quartz_measure_button (HIThemeButtonDrawInfo *draw_info, 
-                       gint                   width, 
+quartz_measure_button (HIThemeButtonDrawInfo *draw_info,
+                       gint                   width,
                        gint                   height)
 {
   HIRect in_rect, out_rect;
@@ -41,21 +41,21 @@ quartz_measure_button (HIThemeButtonDrawInfo *draw_info,
 
   HIThemeGetButtonShape (&in_rect, draw_info, &shape);
   HIShapeGetBounds (shape, &out_rect);
-  g_print ("Shape: %d %d, %d %d  ", 
+  g_print ("Shape: %d %d, %d %d  ",
            (int) out_rect.origin.x,
            (int) out_rect.origin.y,
            (int) out_rect.size.width - (int) out_rect.origin.x,
            (int) out_rect.size.height - (int) out_rect.origin.y);
 
   HIThemeGetButtonBackgroundBounds (&in_rect, draw_info, &out_rect);
-  g_print ("Bounds: %d %d, %d %d  ", 
+  g_print ("Bounds: %d %d, %d %d  ",
            (int) out_rect.origin.x,
            (int) out_rect.origin.y,
            (int) out_rect.size.width - (int) out_rect.origin.x,
            (int) out_rect.size.height - (int) out_rect.origin.y);
 
   HIThemeGetButtonContentBounds (&in_rect, draw_info, &out_rect);
-  g_print ("Content: %d %d, %d %d\n", 
+  g_print ("Content: %d %d, %d %d\n",
            (int) out_rect.origin.x,
            (int) out_rect.origin.y,
            (int) out_rect.size.width - (int) out_rect.origin.x,
@@ -113,7 +113,7 @@ quartz_draw_button (GtkStyle        *style,
     draw_info.adornment |= kThemeAdornmentDefault;
 
   /* FIXME: Emulate default button pulsing. */
-  
+
   gtk_widget_style_get (widget,
                         "focus-line-width", &line_width,
                         NULL);

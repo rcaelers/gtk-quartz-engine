@@ -1,0 +1,23 @@
+Theme
+=====
+
+* Expander, regular button:
+    kind = kThemeDisclosureButton
+    value = kThemeDisclosureRight
+    adornment = kThemeAdornmentNone
+* Spinbutton, regular button:
+    kind = kThemeIncDecButton (and *Mini, *Small...)
+* Optionmenu/combobox
+* Entry needs fixing the background outside its border
+* Entries/buttons etc are drawn outside of their normal bounds, can
+  use GetThemeButtonBackgroundBounds to account for this?
+* Animation (e.g. default button pulsation) needs to be emulated
+
+
+GTK+
+====
+
+* Make invisible-char a style property? 
+* Add xsetting for enabling/disabling mnemonics?
+
+

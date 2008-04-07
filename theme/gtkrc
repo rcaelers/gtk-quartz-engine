@@ -1,0 +1,62 @@
+# FIXME: What sizes should we have?
+gtk-icon-sizes = "gtk-menu=13,13:gtk-small-toolbar=16,16:gtk-large-toolbar=24,24:gtk-dnd=32,32"
+gtk-toolbar-icon-size = small-toolbar
+
+gtk-button-images = 0
+gtk-menu-images = 0
+gtk-enable-mnemonics = 0
+
+style "quartz-default"
+{
+  xthickness = 0
+  ythickness = 0
+
+  GtkWidget::interior-focus = 1
+  GtkWidget::focus-line-width = 0
+  GtkWidget::focus-padding = 0
+
+  GtkButton::default-border = { 0, 0, 0, 0 }
+  GtkButton::default-outside-border = { 0, 0, 0, 0 }
+  GtkButton::child-displacement-x = 0
+  GtkButton::child-displacement-y = 0
+
+  GtkCheckButton::indicator-spacing = 3
+
+  #GtkOptionMenu::indicator-size = { 9, 5 }
+  #GtkOptionMenu::indicator-spacing = { 7, 5, 2, 2 }
+
+  # We have to set a shadow to get the whole box exposed
+  GtkSpinButton::shadow-type = out
+
+  GtkComboBox::appears-as-list = 0
+  GtkComboBox::focus-on-click = 0
+  GtkComboBox::arrow-size = 0
+  GtkComboBox::shadow-type = none
+
+  GtkNotebook::tab-curvature = 5
+  GtkNotebook::tab-overlap = 1
+  GtkNotebook::tab-vborder = 300
+  
+  GtkTreeView::allow-rules = 1
+  GtkTreeView::expander-size = 14
+  GtkToolbar::internal-padding = 3
+  GtkExpander::expander-size = 14
+
+  #GtkScrolledWindow::scrollbar-spacing = 1
+
+  #GtkMenuItem::toggle-spacing = ...
+  GtkMenuItem::horizontal-padding = 8
+  GtkSeparatorMenuItem::horizontal-padding = 2
+
+  engine "quartz"
+  {
+  }
+}
+class "*" style "quartz-default"
+
+style "quartz-toolbar" = "quartz-default"
+{
+	xthickness = 3
+	ythickness = 3
+}
+widget_class "*ToolTip*" style "quartz-toolbar"

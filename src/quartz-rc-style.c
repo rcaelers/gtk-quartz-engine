@@ -1,4 +1,8 @@
-/* This library is free software; you can redistribute it and/or
+/* GTK+ theme engine for the Quartz backend
+ *
+ * Copyright (C) 2007-2008 Imendio AB
+ *
+ * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
  * License as published by the Free Software Foundation; either
  * version 2 of the License, or (at your option) any later version.
@@ -19,9 +23,9 @@
 #include "quartz-style.h"
 #include "quartz-rc-style.h"
 
-static void quartz_rc_style_init (QuartzRcStyle * style);
-static void quartz_rc_style_class_init (QuartzRcStyleClass * klass);
-static GtkStyle *quartz_rc_style_create_style (GtkRcStyle * rc_style);
+static void      quartz_rc_style_init         (QuartzRcStyle      *style);
+static void      quartz_rc_style_class_init   (QuartzRcStyleClass *klass);
+static GtkStyle *quartz_rc_style_create_style (GtkRcStyle         *rc_style);
 
 static GtkRcStyleClass *parent_class;
 

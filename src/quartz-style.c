@@ -1,4 +1,8 @@
-/* This library is free software; you can redistribute it and/or
+/* GTK+ theme engine for the Quartz backend
+ *
+ * Copyright (C) 2007-2008 Imendio AB
+ *
+ * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
  * License as published by the Free Software Foundation; either
  * version 2 of the License, or (at your option) any later version.
@@ -171,7 +175,6 @@ style_get_system_font_string (NSControlSize size)
 static void
 style_setup_rc_styles (void)
 {
-  gchar *str;
   gchar buf[1024];
 
 #define RC_WIDGET(name,match,body,...)                                  \
@@ -238,26 +241,20 @@ style_setup_rc_styles (void)
              "Lucida Grande 9");
 
   /* TreeView column header (button). */
-  str = g_strdup_printf ("style \"quartz-tree-header\" = \"quartz-default\"\n"
-                         "{\n"
-                         "font_name = \"%s\"\n"
-                         "GtkWidget::focus-line-width = 0\n"
-                         "GtkWidget::draw-border = { 1, 1, 1, 1 }\n"
-                         "GtkButton::inner-border = { 3, 3, 1, 3 }\n"
-                         "}widget_class \"*.GtkTreeView.*Button*\" style \"quartz-tree-header\"\n"
-                         "widget_class \"*.GtkCTree.*Button*\" style \"quartz-tree-header\"\n",
-                         "Lucida Grande 11");
-  gtk_rc_parse_string (str);
-  g_free (str);
+  RC_WIDGET_CLASS ("quartz-tree-header", "*.GtkTreeView.*Button*",
+                   "font_name = \"%s\"\n"
+                   "GtkWidget::focus-line-width = 0\n"
+                   "GtkWidget::draw-border = { 1, 1, 1, 1 }\n"
+                   "GtkButton::inner-border = { 3, 3, 1, 3 }\n",
+                   "Lucida Grande 11");
+
+  /* Also apply to ctree headers. */
+  gtk_rc_parse_string ("widget_class \"*.GtkCTree.*Button*\" style \"quartz-tree-header\"\n");
 
   /* TreeView font. */
-  str = g_strdup_printf ("style \"quartz-tree-row\" = \"quartz-default\"\n"
-                         "{\n"
-                         "font_name = \"%s\"\n"
-                         "}widget_class \"*.GtkTreeView\" style \"quartz-tree-row\"\n",
-                         "Lucida Grande 11");
-  gtk_rc_parse_string (str);
-  g_free (str);
+  RC_WIDGET_CLASS ("quartz-tree-row", "*.GtkTreeView",
+                   "font_name = \"%s\"\n",
+                   "Lucida Grande 11");
 
   /* Entry. FIXME: This has some problems, we have to use exterior
    * focus to get any expose events at all for widget->window and not
@@ -280,15 +277,11 @@ style_setup_rc_styles (void)
                    "%s", "");
 
   /* MenuItem. */
-  str = g_strdup_printf ("style \"quartz-menu\" = \"quartz-default\"\n"
-                         "{\n"
-                         "font_name = \"%s\"\n"
-                         "xthickness = 0\n"
-                         "ythickness = 2\n"
-                         "}widget_class \"*MenuItem*\" style \"quartz-menu\"\n",
-                         "Lucida Grande 14");
-  gtk_rc_parse_string (str);
-  g_free (str);
+  RC_WIDGET_CLASS ("quartz-menu", "*MenuItem*",
+                   "font_name = \"%s\"\n"
+                   "xthickness = 0\n"
+                   "ythickness = 2\n",
+                   "Lucida Grande 14");
 
   /* ComboBox. We have to use thickness since the text isn't actually
    * a child of the button. This doesn't work perfectly, we get a

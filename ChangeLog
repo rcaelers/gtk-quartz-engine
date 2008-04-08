@@ -1,3 +1,8 @@
+2008-04-08  Richard Hult  <richard@imendio.com>
+
+	* src/*: More style cleanups, make all the rc style definitions
+	use the macros. Add copyright information and header guards.
+
 2008-04-07  Richard Hult  <richard@imendio.com>
 
 	* src/quartz-rc-style.h:

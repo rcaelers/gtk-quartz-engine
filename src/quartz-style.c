@@ -382,7 +382,6 @@ draw_arrow (GtkStyle      *style,
   HIThemeDrawPopupArrow (&rect, &arrow_info, context, kHIThemeOrientationNormal);
 
   gdk_quartz_drawable_release_context (GDK_WINDOW_OBJECT (window)->impl, context);
-  return;
 }
 
 static gboolean
@@ -1162,14 +1161,13 @@ draw_extension (GtkStyle        *style,
                 GtkPositionType  gap_side)
 {
   DEBUG_DRAW;
-  if (widget
-      && GTK_IS_NOTEBOOK (widget)
-      && detail
-      && !strcmp (detail, "tab"))
+
+  if (widget && GTK_IS_NOTEBOOK (widget) && IS_DETAIL (detail, "tab"))
     {
       HIRect rect, out_rect;
       HIThemeTabDrawInfo draw_info;
       CGContextRef context;
+
       /* bool first, last;
          gint border_width; */
 
@@ -1196,7 +1194,6 @@ draw_extension (GtkStyle        *style,
       else
         draw_info.style = kThemeTabFront;
 
-
       /* TODO: figure out the last one and take thickness into account
 
          border_width = gtk_container_get_border_width (GTK_CONTAINER (widget));
@@ -1214,20 +1211,20 @@ draw_extension (GtkStyle        *style,
 
       draw_info.position = kHIThemeTabPositionOnly;
 
-
       HIThemeDrawTab (&rect,
                       &draw_info,
                       context,
                       kHIThemeOrientationNormal,
                       &out_rect);
-      gdk_quartz_drawable_release_context (GDK_WINDOW_OBJECT (window)->impl, context);
 
+      gdk_quartz_drawable_release_context (GDK_WINDOW_OBJECT (window)->impl, context);
     }
 
-  return;
+#if 0
   parent_class->draw_extension (style, window, state_type,
                                 shadow_type, area, widget, detail,
                                 x, y, width, height, gap_side);
+#endif
 }
 
 static void

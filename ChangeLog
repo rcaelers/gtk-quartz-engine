@@ -1,5 +1,10 @@
 2008-04-08  Richard Hult  <richard@imendio.com>
 
+	* src/quartz-style.c: (draw_arrow), (draw_extension): Small coding
+	style cleanups.
+
+2008-04-08  Richard Hult  <richard@imendio.com>
+
 	* src/*: More style cleanups, make all the rc style definitions
 	use the macros. Add copyright information and header guards.
 

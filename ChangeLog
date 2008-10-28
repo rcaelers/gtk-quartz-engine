@@ -1,5 +1,9 @@
 2008-10-28  Richard Hult  <richard@imendio.com>
 
+	* src/quartz-style.c Small whitespace cleanup.
+
+2008-10-28  Richard Hult  <richard@imendio.com>
+
 	* src/quartz-style.c (get_context): Add helper for getting the
 	context, will be used to clip to the area when necessary soon.
 	(draw_arrow): Don't draw arrows for spin buttons, they are drawn

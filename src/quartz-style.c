@@ -282,8 +282,8 @@ get_context (GdkDrawable  *drawable,
 
 static void
 sanitize_size (GdkWindow *window,
-	       gint      *width,
-	       gint      *height)
+               gint      *width,
+               gint      *height)
 {
   if ((*width == -1) && (*height == -1))
     gdk_drawable_get_size (window, width, height);
@@ -321,13 +321,12 @@ draw_arrow (GtkStyle      *style,
   else if (is_combo_box_child (widget))
     return;
 
-  sanitize_size (window, &width, &height);
-
-  rect = CGRectMake (x, y, width, height);
-
   context = get_context (GDK_WINDOW_OBJECT (window)->impl, area);
   if (!context)
     return;
+
+  sanitize_size (window, &width, &height);
+  rect = CGRectMake (x, y, width, height);
 
   arrow_info.version = 0;
   arrow_info.state = kThemeStateActive;
@@ -1697,7 +1696,6 @@ draw_focus (GtkStyle     *style,
     return;
 
   sanitize_size (window, &width, &height);
-
   rect = CGRectMake (x, y, width, height);
 
   HIThemeDrawFocusRect (&rect, TRUE, context, kHIThemeOrientationNormal);

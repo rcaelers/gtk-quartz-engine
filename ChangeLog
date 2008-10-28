@@ -1,5 +1,10 @@
 2008-10-28  Richard Hult  <richard@imendio.com>
 
+	* src/quartz-style.c (style_setup_rc_styles): Use tooltip colors
+	from the color scheme.
+
+2008-10-28  Richard Hult  <richard@imendio.com>
+
 	* theme/gtkrc: Add a color scheme.
 
 2008-04-08  Richard Hult  <richard@imendio.com>

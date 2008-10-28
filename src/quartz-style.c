@@ -198,21 +198,13 @@ style_setup_rc_styles (void)
               "} class \"" match "\" style \"" name "\"\n", __VA_ARGS__); \
   gtk_rc_parse_string (buf);
 
-  /* FIXME: Comment out for now, doesn't seem to do anything? */
-  /*RC_WIDGET ("quartz-tooltips-caption", "gtk-tooltips.GtkLabel",
-    "fg[NORMAL] = { %d, %d, %d }\n"
-    "font_name = \"%s\"\n",
-    0, 0, 0, "Lucida Grande 11");
-  */
-
-  /* FIXME: Get the right background and frame colors. */
+  /* FIXME: Get the right frame color. */
   RC_WIDGET ("quartz-tooltips", "gtk-tooltip*",
-             "fg[NORMAL] = { 0, 0, 0 }\n"
-             /*"bg[NORMAL] = { %d, %d, %d }\n"*/
+             "bg[NORMAL] = @tooltip_bg_color\n"
+             "fg[NORMAL] = @tooltip_fg_color\n"
              "font_name = \"%s\"\n"
              "xthickness = 4\n"
              "ythickness = 4\n",
-             /*0xf8ff07, 0xf9ff06, 0x7eff81,*/
              "Lucida Grande 11");
 
 #if 0

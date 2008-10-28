@@ -244,7 +244,7 @@ style_setup_rc_styles (void)
   gtk_rc_parse_string ("widget_class \"*.GtkCTree.*Button*\" style \"quartz-tree-header\"\n");
 
   /* TreeView font. */
-  RC_WIDGET_CLASS ("quartz-tree-row", "*.GtkTreeView",
+  RC_WIDGET_CLASS ("quartz-tree-row", "*.<GtkTreeView>",
                    "font_name = \"%s\"\n",
                    "Lucida Grande 11");
 

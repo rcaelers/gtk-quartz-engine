@@ -1673,6 +1673,34 @@ draw_handle (GtkStyle       *style,
              GtkOrientation  orientation)
 {
   DEBUG_DRAW;
+
+  if (GTK_IS_PANED (widget) && IS_DETAIL (detail, "paned"))
+    {
+      HIThemeSplitterDrawInfo draw_info;
+      CGRect rect;
+      CGContextRef context;
+
+      draw_info.version = 0;
+      draw_info.state = kThemeStateActive;
+      draw_info.adornment = kHIThemeSplitterAdornmentNone;
+
+      rect = CGRectMake (x, y, width, height);
+
+      context = gdk_quartz_drawable_get_context (GDK_WINDOW_OBJECT (window)->impl, FALSE);
+      if (!context)
+        return;
+
+      HIThemeDrawPaneSplitter (&rect,
+                               &draw_info,
+                               context,
+                               GTK_IS_HPANED (widget) ?
+                               kHIThemeOrientationNormal :
+                               kHIThemeOrientationInverted);
+
+      gdk_quartz_drawable_release_context (GDK_WINDOW_OBJECT (window)->impl, context);
+
+      return;
+    }
 }
 
 static void

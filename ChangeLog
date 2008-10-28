@@ -1,3 +1,7 @@
+2008-10-28  Richard Hult  <richard@imendio.com>
+
+	* theme/gtkrc: Add a color scheme.
+
 2008-04-08  Richard Hult  <richard@imendio.com>
 
 	* src/quartz-style.c: (draw_arrow), (draw_extension): Small coding

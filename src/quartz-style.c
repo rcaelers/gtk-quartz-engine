@@ -103,58 +103,6 @@ style_setup_system_font (GtkStyle *style)
   style->font_desc = pango_font_description_from_string (font);
 }
 
-/*
-
-  System font, kThemeSystemFont:
-
-  "Lucida Grande Regular 13" is used for text in menus, dialogs, and
-  full-size controls.
-
-  Emphasized system font, kThemeEmphasizedSystemFont:
-
-  "Lucida Grande Bold 13", use sparingly. It is used for the message
-  text in alerts.
-
-  Small system font, kThemeSmallSystemFont
-
-  "Lucida Grande Regular 11" is used for informative text in
-  alerts. It is also the default font for column headings in lists,
-  for help tags, and for small controls. You can also use it to
-  provide additional information about settings.
-
-  Emphasized small system font, kThemeSmallEmphazisedSystemFont
-
-  "Lucida Grande Bold 11", use sparingly. You might use it to title a
-  group of settings that appear without a group box, or for brief
-  informative text below a text field.
-
-  Mini system font, kThemeMiniSystemFont
-
-  "Lucida Grande Regular 9" is used for mini controls. It can also be
-  used for utility window labels and text.
-
-  Emphasized mini system font, N/A
-
-  "Lucida Grande Bold 9" is available for cases in which the
-  emphasized small system font is too large.
-
-  Application font, kThemeApplicationFont
-
-  "Lucida Grande Regular 13", the default font for user-created text
-  documents.
-
-  Label font, kThemeLabelFont
-
-  "Lucida Grande Regular 10" is used for the labels on toolbar buttons
-  and to label tick marks on full-size sliders.
-
-  View font, kThemeViewsFont
-
-  "Lucida Grande Regular 12" as the default font of text in lists and
-  tables.
-
-*/
-
 #if 0
 static gchar *
 style_get_system_font_string (NSControlSize size)
@@ -314,6 +262,37 @@ style_setup_rc_styles (void)
                    "%s", "");
 }
 
+static CGContextRef
+get_context (GdkDrawable  *drawable,
+             GdkRectangle *area)
+{
+  CGContextRef context;
+
+  context = gdk_quartz_drawable_get_context (drawable, FALSE);
+  if (!context)
+    return NULL;
+
+  if (area)
+    {
+      /* FIXME: clip */
+    }
+
+  return context;
+}
+
+static void
+sanitize_size (GdkWindow *window,
+	       gint      *width,
+	       gint      *height)
+{
+  if ((*width == -1) && (*height == -1))
+    gdk_drawable_get_size (window, width, height);
+  else if (*width == -1)
+    gdk_drawable_get_size (window, width, NULL);
+  else if (*height == -1)
+    gdk_drawable_get_size (window, NULL, height);
+}
+
 static void
 draw_arrow (GtkStyle      *style,
             GdkWindow     *window,
@@ -337,12 +316,16 @@ draw_arrow (GtkStyle      *style,
 
   if (GTK_IS_SCROLLBAR (widget))
     return;
-  if (is_combo_box_child (widget))
+  else if (GTK_IS_SPIN_BUTTON (widget))
     return;
+  else if (is_combo_box_child (widget))
+    return;
+
+  sanitize_size (window, &width, &height);
 
   rect = CGRectMake (x, y, width, height);
 
-  context = gdk_quartz_drawable_get_context (GDK_WINDOW_OBJECT (window)->impl, FALSE);
+  context = get_context (GDK_WINDOW_OBJECT (window)->impl, area);
   if (!context)
     return;
 
@@ -450,6 +433,8 @@ draw_box (GtkStyle      *style,
 {
   DEBUG_DRAW;
 
+  sanitize_size (window, &width, &height);
+
   if (GTK_IS_BUTTON (widget) && is_tree_view_child (widget))
     {
       /* FIXME: Refactor and share with the rest of the button
@@ -480,7 +465,7 @@ draw_box (GtkStyle      *style,
        */
       rect = CGRectMake (x - 1, y - 1, width + 2, height + 2);
 
-      context = gdk_quartz_drawable_get_context (GDK_WINDOW_OBJECT (window)->impl, FALSE);
+      context = get_context (GDK_WINDOW_OBJECT (window)->impl, area);
       if (!context)
         return;
 
@@ -529,7 +514,7 @@ draw_box (GtkStyle      *style,
       rect = CGRectMake (x + line_width, y + line_width,
                          width - 2 * line_width, height - 2 * line_width - 1);
 
-      context = gdk_quartz_drawable_get_context (GDK_WINDOW_OBJECT (window)->impl, FALSE);
+      context = get_context (GDK_WINDOW_OBJECT (window)->impl, area);
       if (!context)
         return;
 
@@ -574,7 +559,7 @@ draw_box (GtkStyle      *style,
 
           rect = CGRectMake (x, y, width, height);
 
-          context = gdk_quartz_drawable_get_context (GDK_WINDOW_OBJECT (window)->impl, FALSE);
+          context = get_context (GDK_WINDOW_OBJECT (window)->impl, area);
           if (!context)
             return;
 
@@ -634,18 +619,9 @@ draw_box (GtkStyle      *style,
 
       rect = CGRectMake (x, y, width, height);
 
-      //g_print ("%d %d %d %d\n", x, y, width, height);
-
-      context = gdk_quartz_drawable_get_context (GDK_WINDOW_OBJECT (window)->impl, FALSE);
+      context = get_context (GDK_WINDOW_OBJECT (window)->impl, area);
       if (!context)
         return;
-
-      // this only covers the -color-, not the gradient
-      //HIThemeSetFill (kThemeBrushToolbarBackground, NULL, context, kHIThemeOrientationNormal);
-      //CGContextFillRect (context, (CGRect) rect);
-
-      //HIThemeApplyBackground (&rect, &draw_info, context, kHIThemeOrientationNormal);
-      //HIThemeDrawBackground (&rect, &draw_info, context, kHIThemeOrientationNormal);
 
       gdk_quartz_drawable_release_context (GDK_WINDOW_OBJECT (window)->impl, context);
 
@@ -672,7 +648,7 @@ draw_box (GtkStyle      *style,
       /* FIXME?: We shift one pixel to avoid the grey border */
       bg_rect = CGRectMake (x-1, y-1, width+2, height+2);
 
-      context = gdk_quartz_drawable_get_context (GDK_WINDOW_OBJECT (window)->impl, FALSE);
+      context = get_context (GDK_WINDOW_OBJECT (window)->impl, area);
       if (!context)
         return;
 
@@ -700,7 +676,7 @@ draw_box (GtkStyle      *style,
 
       rect = CGRectMake (x, y, width, height);
 
-      context = gdk_quartz_drawable_get_context (GDK_WINDOW_OBJECT (window)->impl, FALSE);
+      context = get_context (GDK_WINDOW_OBJECT (window)->impl, area);
       if (!context)
         return;
 
@@ -738,7 +714,7 @@ draw_box (GtkStyle      *style,
       gdk_window_get_size (toplevel->window, &width, &height);
       menu_rect = CGRectMake (0, 0, width, height);
 
-      context = gdk_quartz_drawable_get_context (GDK_WINDOW_OBJECT (window)->impl, FALSE);
+      context = get_context (GDK_WINDOW_OBJECT (window)->impl, area);
       if (!context)
         return;
 
@@ -768,7 +744,7 @@ draw_box (GtkStyle      *style,
 
       rect = CGRectMake (x - 1, y - 1, width + 2, height + 2);
 
-      context = gdk_quartz_drawable_get_context (GDK_WINDOW_OBJECT (window)->impl, FALSE);
+      context = get_context (GDK_WINDOW_OBJECT (window)->impl, area);
       if (!context)
         return;
 
@@ -838,7 +814,7 @@ draw_box (GtkStyle      *style,
 
       if (GDK_IS_PIXMAP (window))
         {
-          context = gdk_quartz_drawable_get_context (GDK_PIXMAP_OBJECT (window)->impl, FALSE);
+          context = get_context (GDK_PIXMAP_OBJECT (window)->impl, area);
           if (!context)
             return;
 
@@ -848,7 +824,7 @@ draw_box (GtkStyle      *style,
         }
       else
         {
-          context = gdk_quartz_drawable_get_context (GDK_WINDOW_OBJECT (window)->impl, FALSE);
+          context = get_context (GDK_WINDOW_OBJECT (window)->impl, area);
           if (!context)
             return;
         }
@@ -906,7 +882,7 @@ draw_box (GtkStyle      *style,
 
       draw_info.trackInfo.slider.thumbDir = kThemeThumbPlain;
 
-      context = gdk_quartz_drawable_get_context (GDK_WINDOW_OBJECT (window)->impl, FALSE);
+      context = get_context (GDK_WINDOW_OBJECT (window)->impl, area);
       if (!context)
         return;
 
@@ -966,7 +942,7 @@ draw_box (GtkStyle      *style,
 
       //draw_info.trackInfo.slider.thumbDir = kThemeThumbPlain;
 
-      context = gdk_quartz_drawable_get_context (GDK_WINDOW_OBJECT (window)->impl, FALSE);
+      context = get_context (GDK_WINDOW_OBJECT (window)->impl, area);
       if (!context)
         return;
 
@@ -1041,7 +1017,7 @@ draw_check (GtkStyle      *style,
 
       rect = CGRectMake (x, y+1, width, height);
 
-      context = gdk_quartz_drawable_get_context (GDK_WINDOW_OBJECT (window)->impl, FALSE);
+      context = get_context (GDK_WINDOW_OBJECT (window)->impl, area);
       if (!context)
         return;
 
@@ -1105,7 +1081,7 @@ draw_option (GtkStyle      *style,
 
       rect = CGRectMake (x, y, width, height);
 
-      context = gdk_quartz_drawable_get_context (GDK_WINDOW_OBJECT (window)->impl, FALSE);
+      context = get_context (GDK_WINDOW_OBJECT (window)->impl, area);
       if (!context)
         return;
 
@@ -1169,7 +1145,7 @@ draw_extension (GtkStyle        *style,
       else
         rect = CGRectMake (x, y, width, height);
 
-      context = gdk_quartz_drawable_get_context (GDK_WINDOW_OBJECT (window)->impl, FALSE);
+      context = get_context (GDK_WINDOW_OBJECT (window)->impl, area);
       if (!context)
         return;
 
@@ -1238,6 +1214,9 @@ draw_box_gap (GtkStyle        *style,
   DEBUG_DRAW;
 
   return;
+
+  sanitize_size (window, &width, &height);
+
   parent_class->draw_box_gap (style, window, state_type, shadow_type,
                               area, widget, detail, x, y, width, height,
                               gap_side, gap_x, gap_width);
@@ -1258,6 +1237,8 @@ draw_flat_box (GtkStyle      *style,
 {
   DEBUG_DRAW;
 
+  sanitize_size (window, &width, &height);
+
   if (IS_DETAIL (detail, "base") ||
       IS_DETAIL (detail, "viewportbin") ||
       IS_DETAIL (detail, "eventbox"))
@@ -1276,7 +1257,7 @@ draw_flat_box (GtkStyle      *style,
       draw_info.version = 0;
       draw_info.state = kThemeStateActive;
 
-      context = gdk_quartz_drawable_get_context (GDK_WINDOW_OBJECT (window)->impl, FALSE);
+      context = get_context (GDK_WINDOW_OBJECT (window)->impl, area);
       if (!context)
         return;
 
@@ -1309,7 +1290,7 @@ draw_flat_box (GtkStyle      *style,
       rect = CGRectMake (x + line_width, y + line_width,
                          width - 2 * line_width, height - 2 * line_width);
 
-      context = gdk_quartz_drawable_get_context (GDK_WINDOW_OBJECT (window)->impl, FALSE);
+      context = get_context (GDK_WINDOW_OBJECT (window)->impl, area);
       if (!context)
         return;
 
@@ -1339,9 +1320,9 @@ draw_flat_box (GtkStyle      *style,
       rect = CGRectMake (x - 2, y - 1, width + 4, height + 4);
 
       if (GDK_IS_PIXMAP (window))
-        context = gdk_quartz_drawable_get_context (GDK_PIXMAP_OBJECT (window)->impl, FALSE);
+        context = get_context (GDK_PIXMAP_OBJECT (window)->impl, area);
       else
-        context = gdk_quartz_drawable_get_context (GDK_WINDOW_OBJECT (window)->impl, FALSE);
+        context = get_context (GDK_WINDOW_OBJECT (window)->impl, area);
 
       if (!context)
         return;
@@ -1368,7 +1349,7 @@ draw_flat_box (GtkStyle      *style,
 
       rect = CGRectMake (x, y, width, height);
 
-      context = gdk_quartz_drawable_get_context (GDK_WINDOW_OBJECT (window)->impl, FALSE);
+      context = get_context (GDK_WINDOW_OBJECT (window)->impl, area);
       if (!context)
         return;
 
@@ -1414,73 +1395,58 @@ draw_shadow (GtkStyle      *style,
              gint           width,
              gint           height)
 {
-  GtkWidget *child = NULL;
-
   DEBUG_DRAW;
 
-  if (GTK_IS_BIN (widget))
-    child = gtk_bin_get_child (GTK_BIN (widget));
+  sanitize_size (window, &width, &height);
 
-  /* Scrolled window with treeview in it. */
-  if (IS_DETAIL (detail, "scrolled_window") && GTK_IS_TREE_VIEW (child))
+  /* Handle shawod in and etched in for scrolled window. */
+  if ((GTK_IS_SCROLLED_WINDOW (widget) && IS_DETAIL (detail, "scrolled_window")) ||
+      (GTK_IS_FRAME (widget) && IS_DETAIL (detail, "frame")))
     {
-      CGContextRef context;
-      HIRect rect;
-      HIThemeFrameDrawInfo draw_info;
+      GtkShadowType shadow_type = GTK_SHADOW_NONE;
 
-      draw_info.version = 0;
-      draw_info.kind = kHIThemeFrameListBox;
-      if (state_type == GTK_STATE_INSENSITIVE)
-        draw_info.state = kThemeStateInactive;
-      else
-        draw_info.state = kThemeStateActive;
-      draw_info.isFocused = GTK_WIDGET_HAS_FOCUS (widget);
+       if (GTK_IS_SCROLLED_WINDOW (widget))
+        shadow_type = gtk_scrolled_window_get_shadow_type (GTK_SCROLLED_WINDOW (widget));
+      else if (GTK_IS_FRAME (widget))
+        shadow_type = gtk_frame_get_shadow_type (GTK_FRAME (widget));
 
-      rect = CGRectMake (x, y, width, height);
+      if (shadow_type == GTK_SHADOW_IN || shadow_type == GTK_SHADOW_ETCHED_IN)
+        {
+          GtkWidget *child = NULL;
+          CGContextRef context;
+          HIRect rect;
+          HIThemeFrameDrawInfo draw_info;
 
-      context = gdk_quartz_drawable_get_context (GDK_WINDOW_OBJECT (window)->impl, FALSE);
-      if (!context)
-        return;
+          child = gtk_bin_get_child (GTK_BIN (widget));
 
-      HIThemeDrawFrame (&rect,
-                        &draw_info,
-                        context,
-                        kHIThemeOrientationNormal);
+          draw_info.version = 0;
+          if (child && GTK_IS_TEXT_VIEW (child))
+            draw_info.kind = kHIThemeFrameTextFieldSquare;
+          else
+            draw_info.kind = kHIThemeFrameListBox;
+          if (state_type == GTK_STATE_INSENSITIVE)
+            draw_info.state = kThemeStateInactive;
+          else
+            draw_info.state = kThemeStateActive;
+          draw_info.isFocused = GTK_WIDGET_HAS_FOCUS (widget);
 
-      gdk_quartz_drawable_release_context (GDK_WINDOW_OBJECT (window)->impl, context);
+          rect = CGRectMake (x, y, width, height);
+
+          context = get_context (GDK_WINDOW_OBJECT (window)->impl, area);
+          if (!context)
+            return;
+
+          HIThemeDrawFrame (&rect,
+                            &draw_info,
+                            context,
+                            kHIThemeOrientationNormal);
+
+          gdk_quartz_drawable_release_context (GDK_WINDOW_OBJECT (window)->impl, context);
+        }
 
       return;
     }
-  /* Scrolled window with text view in it. */
-  else if (IS_DETAIL (detail, "scrolled_window") && GTK_IS_TEXT_VIEW (child))
-    {
-      CGContextRef context;
-      HIRect rect;
-      HIThemeFrameDrawInfo draw_info;
 
-      draw_info.version = 0;
-      draw_info.kind = kHIThemeFrameListBox;
-      if (state_type == GTK_STATE_INSENSITIVE)
-        draw_info.state = kThemeStateInactive;
-      else
-        draw_info.state = kThemeStateActive;
-      draw_info.isFocused = GTK_WIDGET_HAS_FOCUS (widget);
-
-      rect = CGRectMake (x, y, width, height);
-
-      context = gdk_quartz_drawable_get_context (GDK_WINDOW_OBJECT (window)->impl, FALSE);
-      if (!context)
-        return;
-
-      HIThemeDrawFrame (&rect,
-                        &draw_info,
-                        context,
-                        kHIThemeOrientationNormal);
-
-      gdk_quartz_drawable_release_context (GDK_WINDOW_OBJECT (window)->impl, context);
-
-      return;
-    }
   else if (IS_DETAIL (detail, "entry"))
     {
       CGContextRef context;
@@ -1496,7 +1462,7 @@ draw_shadow (GtkStyle      *style,
 
       rect = CGRectMake (x - 1, y - 1, width + 2, height + 2);
 
-      context = gdk_quartz_drawable_get_context (GDK_WINDOW_OBJECT (window)->impl, FALSE);
+      context = get_context (GDK_WINDOW_OBJECT (window)->impl, area);
       if (!context)
         return;
 
@@ -1534,6 +1500,9 @@ draw_shadow_gap (GtkStyle        *style,
   DEBUG_DRAW;
 
   return;
+
+  sanitize_size (window, &width, &height);
+
   g_print ("Missing implementation of draw_shadow_gap for %s\n", detail);
   parent_class->draw_shadow_gap (style, window, state_type, shadow_type, area,
                                  widget, detail, x, y, width, height,
@@ -1580,7 +1549,7 @@ draw_hline (GtkStyle     *style,
       gdk_window_get_size (toplevel->window, &width, &height);
       menu_rect = CGRectMake (0, 0, width, height);
 
-      context = gdk_quartz_drawable_get_context (GDK_WINDOW_OBJECT (window)->impl, FALSE);
+      context = get_context (GDK_WINDOW_OBJECT (window)->impl, area);
       if (!context)
         return;
 
@@ -1674,6 +1643,8 @@ draw_handle (GtkStyle       *style,
 {
   DEBUG_DRAW;
 
+  sanitize_size (window, &width, &height);
+
   if (GTK_IS_PANED (widget) && IS_DETAIL (detail, "paned"))
     {
       HIThemeSplitterDrawInfo draw_info;
@@ -1686,7 +1657,7 @@ draw_handle (GtkStyle       *style,
 
       rect = CGRectMake (x, y, width, height);
 
-      context = gdk_quartz_drawable_get_context (GDK_WINDOW_OBJECT (window)->impl, FALSE);
+      context = get_context (GDK_WINDOW_OBJECT (window)->impl, area);
       if (!context)
         return;
 
@@ -1721,9 +1692,11 @@ draw_focus (GtkStyle     *style,
   CGRect rect;
   CGContext context;
 
-  context = gdk_quartz_drawable_get_context (GDK_WINDOW_OBJECT (window)->impl, FALSE);
+  context = get_context (GDK_WINDOW_OBJECT (window)->impl, area);
   if (!context)
     return;
+
+  sanitize_size (window, &width, &height);
 
   rect = CGRectMake (x, y, width, height);
 

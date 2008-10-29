@@ -1,5 +1,10 @@
 2008-10-29  Richard Hult  <richard@imendio.com>
 
+	* src/quartz-style.c: (style_setup_rc_styles): Remove unused
+	styles.
+
+2008-10-29  Richard Hult  <richard@imendio.com>
+
 	* src/quartz-style.c: (find_last_notebook_tab_forall),
 	(draw_extension): Add notebook tab drawing.
 	* theme/gtkrc: Forgot to commit those before.

@@ -232,13 +232,6 @@ style_setup_rc_styles (void)
                    "ythickness = 2\n"
                    "%s", "");
 
-  RC_WIDGET_CLASS ("quartz-combobox-arrow", "*GtkComboBox",
-                   "GtkComboBox::arrow-size = 9\n"
-                   "%s", "");
-
-  RC_WIDGET_CLASS ("quartz-combobox-cellview", "*GtkComboBox*.GtkCellView*",
-                   "%s", "");
-
   /* ProgressBar. */
   RC_WIDGET_CLASS ("quartz-progressbar", "*ProgressBar*",
                    "font_name = \"%s\"\n",
@@ -501,8 +494,8 @@ draw_box (GtkStyle      *style,
         draw_info.adornment |= kThemeAdornmentFocus;
 
       /* FIXME: We should make the button "greyed out" when the window
-       * doesn't have focus, but I can't see how it can be done (it's
-       * not the same as insensitive).
+       * doesn't have focus, but I can't see how it can be done (it's not
+       * the same as insensitive).
        */
 
       gtk_widget_style_get (widget,

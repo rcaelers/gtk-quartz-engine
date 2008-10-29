@@ -1112,6 +1112,30 @@ draw_tab (GtkStyle      *style,
   return;
 }
 
+typedef struct {
+  GtkWidget *notebook;
+  gint       max_x;
+} FindLastNotebookTabData;
+
+static void
+find_last_notebook_tab_forall (GtkWidget *widget,
+                               gpointer   user_data)
+{
+  FindLastNotebookTabData *data = user_data;
+
+  if (gtk_widget_get_parent (widget) != data->notebook)
+    return;
+
+  /* Filter out all the non-tab-label widgets by checking if the child has a
+   * tab label in which case it isn't one... Very ugly.
+   */
+  if (gtk_notebook_get_tab_label (GTK_NOTEBOOK (data->notebook), widget))
+    return;
+
+  if (data->max_x < widget->allocation.x)
+    data->max_x = widget->allocation.x;
+}
+
 static void
 draw_extension (GtkStyle        *style,
                 GdkWindow       *window,
@@ -1128,9 +1152,70 @@ draw_extension (GtkStyle        *style,
 {
   DEBUG_DRAW;
 
+  if (widget && GTK_IS_NOTEBOOK (widget) && IS_DETAIL (detail, "tab"))
+    {
+      HIRect rect, out_rect;
+      HIThemeTabDrawInfo draw_info;
+      CGContextRef context;
+
+      context = get_context (GDK_WINDOW_OBJECT (window)->impl, area);
+      if (!context)
+        return;
+
+      rect = CGRectMake (x, y, width, height);
+
+      draw_info.version = 1;
+      draw_info.direction = kThemeTabNorth;
+      draw_info.size = kHIThemeTabSizeNormal;
+      draw_info.adornment = kHIThemeTabAdornmentTrailingSeparator;
+      draw_info.kind = kHIThemeTabKindNormal;
+
+      if (state_type == GTK_STATE_ACTIVE)
+        draw_info.style = kThemeTabNonFront;
+      else if (state_type == GTK_STATE_INSENSITIVE)
+        draw_info.style = kThemeTabNonFrontInactive;
+      else
+        draw_info.style = kThemeTabFront;
+
+      /* Try to draw notebook tabs okish. It's quite hacky but oh well... */
+      if (gtk_notebook_get_n_pages (GTK_NOTEBOOK (widget)) == 1)
+        draw_info.position = kHIThemeTabPositionOnly;
+      else
+        {
+          FindLastNotebookTabData data;
+          gint border_width;
+          gint extra_width;
+
+          data.notebook = widget;
+          data.max_x = 0;
+          gtk_container_forall (GTK_CONTAINER (widget), find_last_notebook_tab_forall, &data);
+
+          border_width = gtk_container_get_border_width (GTK_CONTAINER (widget));
+          extra_width = GTK_NOTEBOOK (widget)->tab_hborder + widget->style->xthickness;
+
+          /* This might need some tweaking to work in all cases. */
+          if (x == widget->allocation.x + border_width)
+            draw_info.position = kHIThemeTabPositionFirst;
+          else if (x == data.max_x - extra_width)
+            draw_info.position = kHIThemeTabPositionLast;
+          else 
+            draw_info.position = kHIThemeTabPositionMiddle;
+        }
+
+      HIThemeDrawTab (&rect,
+                      &draw_info,
+                      context,
+                      kHIThemeOrientationNormal,
+                      &out_rect);
+
+      gdk_quartz_drawable_release_context (GDK_WINDOW_OBJECT (window)->impl, context);
+    }
+
+#if 0
   parent_class->draw_extension (style, window, state_type,
                                 shadow_type, area, widget, detail,
                                 x, y, width, height, gap_side);
+#endif
 }
 
 static void

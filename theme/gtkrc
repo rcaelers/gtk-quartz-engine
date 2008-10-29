@@ -35,16 +35,15 @@ style "quartz-default"
   GtkComboBox::arrow-size = 0
   GtkComboBox::shadow-type = none
 
-  GtkNotebook::tab-curvature = 5
-  GtkNotebook::tab-overlap = 1
-  GtkNotebook::tab-vborder = 300
+  GtkNotebook::tab-curvature = 4
+  GtkNotebook::tab-overlap = 0
   
   GtkTreeView::allow-rules = 1
   GtkTreeView::expander-size = 14
   GtkToolbar::internal-padding = 3
   GtkExpander::expander-size = 14
 
-  #GtkScrolledWindow::scrollbar-spacing = 1
+  GtkScrolledWindow::scrollbar-spacing = 0
 
   #GtkMenuItem::toggle-spacing = ...
   GtkMenuItem::horizontal-padding = 8
@@ -56,9 +55,29 @@ style "quartz-default"
 }
 class "*" style "quartz-default"
 
-style "quartz-toolbar" = "quartz-default"
+style "quartz-toolbar"
 {
-	xthickness = 3
-	ythickness = 3
+  xthickness = 3
+  ythickness = 3
+
+  engine "quartz" {}
 }
-widget_class "*ToolTip*" style "quartz-toolbar"
+widget_class "*Toolbar*" style "quartz-toolbar"
+
+style "quartz-frame"
+{
+  xthickness = 2
+  ythickness = 2
+
+  engine "quartz" {}
+}
+widget_class "*.<GtkFrame>" style "quartz-frame"
+
+style "quartz-scrolled-window"
+{
+  xthickness = 2
+  ythickness = 2
+
+  engine "quartz" {}
+}
+widget_class "*.<GtkScrolledWindow>" style "quartz-scrolled-window"

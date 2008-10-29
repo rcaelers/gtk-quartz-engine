@@ -1,5 +1,11 @@
 2008-10-29  Richard Hult  <richard@imendio.com>
 
+	* src/quartz-style.c: (find_last_notebook_tab_forall),
+	(draw_extension): Add notebook tab drawing.
+	* theme/gtkrc: Forgot to commit those before.
+
+2008-10-29  Richard Hult  <richard@imendio.com>
+
 	* src/quartz-style.c: (draw_shadow): Improve the look of scrolled
 	window, frame, entry. Remove broken notebook code for now, it's
 	not useful in its current state.

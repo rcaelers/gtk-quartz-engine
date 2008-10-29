@@ -1,5 +1,5 @@
 # FIXME: What sizes should we have?
-gtk-icon-sizes = "gtk-menu=13,13:gtk-small-toolbar=16,16:gtk-large-toolbar=24,24:gtk-dnd=32,32"
+gtk-icon-sizes = "gtk-menu=16,16:gtk-small-toolbar=16,16:gtk-large-toolbar=24,24:gtk-dnd=32,32"
 gtk-toolbar-icon-size = small-toolbar
 
 gtk_color_scheme = "fg_color:#000\nbg_color:ededed\nbase_color:#fff\ntext_color:#1A1A1A\nselected_bg_color:#86ABD9\nselected_fg_color:#fff\ntooltip_bg_color:#F5F5B5\ntooltip_fg_color:#000"

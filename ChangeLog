@@ -1,5 +1,9 @@
 2008-10-29  Richard Hult  <richard@imendio.com>
 
+	* theme/gtkrc: Change menu icon size to 16x16.
+
+2008-10-29  Richard Hult  <richard@imendio.com>
+
 	* src/quartz-style.c: (style_setup_rc_styles): Remove unused
 	styles.
 

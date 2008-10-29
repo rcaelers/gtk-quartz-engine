@@ -256,10 +256,16 @@ style_setup_rc_styles (void)
 }
 
 static CGContextRef
-get_context (GdkDrawable  *drawable,
+get_context (GdkWindow    *window,
              GdkRectangle *area)
 {
-  CGContextRef context;
+  GdkDrawable  *drawable;
+  CGContextRef  context;
+
+  if (GDK_IS_PIXMAP (window))
+    drawable = GDK_PIXMAP_OBJECT (window)->impl;
+  else
+    drawable = GDK_WINDOW_OBJECT (window)->impl;
 
   context = gdk_quartz_drawable_get_context (drawable, FALSE);
   if (!context)
@@ -270,6 +276,20 @@ get_context (GdkDrawable  *drawable,
                                               area->width, area->height));
 
   return context;
+}
+
+static void
+release_context (GdkWindow    *window,
+                 CGContextRef  context)
+{
+  GdkDrawable *drawable;
+
+  if (GDK_IS_PIXMAP (window))
+    drawable = GDK_PIXMAP_OBJECT (window)->impl;
+  else
+    drawable = GDK_WINDOW_OBJECT (window)->impl;
+
+  gdk_quartz_drawable_release_context (drawable, context);
 }
 
 static void
@@ -313,7 +333,7 @@ draw_arrow (GtkStyle      *style,
   else if (is_combo_box_child (widget))
     return;
 
-  context = get_context (GDK_WINDOW_OBJECT (window)->impl, area);
+  context = get_context (window, area);
   if (!context)
     return;
 
@@ -347,7 +367,7 @@ draw_arrow (GtkStyle      *style,
 
   HIThemeDrawPopupArrow (&rect, &arrow_info, context, kHIThemeOrientationNormal);
 
-  gdk_quartz_drawable_release_context (GDK_WINDOW_OBJECT (window)->impl, context);
+  release_context (window, context);
 }
 
 static gboolean
@@ -456,7 +476,7 @@ draw_box (GtkStyle      *style,
        */
       rect = CGRectMake (x - 1, y - 1, width + 2, height + 2);
 
-      context = get_context (GDK_WINDOW_OBJECT (window)->impl, area);
+      context = get_context (window, area);
       if (!context)
         return;
 
@@ -466,7 +486,7 @@ draw_box (GtkStyle      *style,
                          kHIThemeOrientationNormal,
                          NULL);
 
-      gdk_quartz_drawable_release_context (GDK_WINDOW_OBJECT (window)->impl, context);
+      release_context (window, context);
 
       return;
     }
@@ -505,7 +525,7 @@ draw_box (GtkStyle      *style,
       rect = CGRectMake (x + line_width, y + line_width,
                          width - 2 * line_width, height - 2 * line_width - 1);
 
-      context = get_context (GDK_WINDOW_OBJECT (window)->impl, area);
+      context = get_context (window, area);
       if (!context)
         return;
 
@@ -515,7 +535,7 @@ draw_box (GtkStyle      *style,
                          kHIThemeOrientationNormal,
                          NULL);
 
-      gdk_quartz_drawable_release_context (GDK_WINDOW_OBJECT (window)->impl, context);
+      release_context (window, context);
 
       return;
     }
@@ -550,7 +570,7 @@ draw_box (GtkStyle      *style,
 
           rect = CGRectMake (x, y, width, height);
 
-          context = get_context (GDK_WINDOW_OBJECT (window)->impl, area);
+          context = get_context (window, area);
           if (!context)
             return;
 
@@ -560,7 +580,7 @@ draw_box (GtkStyle      *style,
                              kHIThemeOrientationNormal,
                              NULL);
 
-          gdk_quartz_drawable_release_context (GDK_WINDOW_OBJECT (window)->impl, context);
+          release_context (window, context);
 
           return;
         }
@@ -610,11 +630,11 @@ draw_box (GtkStyle      *style,
 
       rect = CGRectMake (x, y, width, height);
 
-      context = get_context (GDK_WINDOW_OBJECT (window)->impl, area);
+      context = get_context (window, area);
       if (!context)
         return;
 
-      gdk_quartz_drawable_release_context (GDK_WINDOW_OBJECT (window)->impl, context);
+      release_context (window, context);
 
       return;
     }
@@ -639,7 +659,7 @@ draw_box (GtkStyle      *style,
       /* FIXME?: We shift one pixel to avoid the grey border */
       bg_rect = CGRectMake (x-1, y-1, width+2, height+2);
 
-      context = get_context (GDK_WINDOW_OBJECT (window)->impl, area);
+      context = get_context (window, area);
       if (!context)
         return;
 
@@ -648,7 +668,7 @@ draw_box (GtkStyle      *style,
       HIThemeDrawPlacard (&bg_rect, &bg_draw_info, context, kHIThemeOrientationNormal);
       HIThemeDrawMenuBarBackground (&rect, &draw_info, context, kHIThemeOrientationNormal);
 
-      gdk_quartz_drawable_release_context (GDK_WINDOW_OBJECT (window)->impl, context);
+      release_context (window, context);
 
       return;
     }
@@ -667,13 +687,13 @@ draw_box (GtkStyle      *style,
 
       rect = CGRectMake (x, y, width, height);
 
-      context = get_context (GDK_WINDOW_OBJECT (window)->impl, area);
+      context = get_context (window, area);
       if (!context)
         return;
 
       HIThemeDrawMenuBackground (&rect, &draw_info, context, kHIThemeOrientationNormal);
 
-      gdk_quartz_drawable_release_context (GDK_WINDOW_OBJECT (window)->impl, context);
+      release_context (window, context);
 
       return;
     }
@@ -705,7 +725,7 @@ draw_box (GtkStyle      *style,
       gdk_window_get_size (toplevel->window, &width, &height);
       menu_rect = CGRectMake (0, 0, width, height);
 
-      context = get_context (GDK_WINDOW_OBJECT (window)->impl, area);
+      context = get_context (window, area);
       if (!context)
         return;
 
@@ -716,7 +736,7 @@ draw_box (GtkStyle      *style,
                            kHIThemeOrientationNormal,
                            NULL);
 
-      gdk_quartz_drawable_release_context (GDK_WINDOW_OBJECT (window)->impl, context);
+      release_context (window, context);
 
       return;
     }
@@ -735,7 +755,7 @@ draw_box (GtkStyle      *style,
 
       rect = CGRectMake (x - 1, y - 1, width + 2, height + 2);
 
-      context = get_context (GDK_WINDOW_OBJECT (window)->impl, area);
+      context = get_context (window, area);
       if (!context)
         return;
 
@@ -764,7 +784,7 @@ draw_box (GtkStyle      *style,
                          kHIThemeOrientationNormal,
                          NULL);
 
-      gdk_quartz_drawable_release_context (GDK_WINDOW_OBJECT (window)->impl, context);
+      release_context (window, context);
 
       return;
     }
@@ -796,39 +816,15 @@ draw_box (GtkStyle      *style,
       draw_info.max = 100;
       draw_info.value = gtk_progress_bar_get_fraction (GTK_PROGRESS_BAR (widget)) * 100;
       draw_info.attributes = kThemeTrackHorizontal;
-      draw_info.trackInfo.progress.phase = 0; // for indeterminate ones
+      draw_info.trackInfo.progress.phase = 0; /* for indeterminate ones */
 
-      /* FIXME: This is really weird, might be a bg in the backend. We
-       * have to flip the context while drawing the progess bar,
-       * otherwise it ends up with a strange offset.
-       */
-
-      if (GDK_IS_PIXMAP (window))
-        {
-          context = get_context (GDK_PIXMAP_OBJECT (window)->impl, area);
-          if (!context)
-            return;
-
-          CGContextSaveGState (context);
-          CGContextTranslateCTM (context, 0, CGBitmapContextGetHeight (context));
-          CGContextScaleCTM (context, 1.0, -1.0);
-        }
-      else
-        {
-          context = get_context (GDK_WINDOW_OBJECT (window)->impl, area);
-          if (!context)
-            return;
-        }
+      context = get_context (window, area);
+      if (!context)
+        return;
 
       HIThemeDrawTrack (&draw_info, NULL, context, kHIThemeOrientationNormal);
 
-      if (GDK_IS_PIXMAP (window))
-        {
-          CGContextRestoreGState (context);
-          gdk_quartz_drawable_release_context (GDK_PIXMAP_OBJECT (window)->impl, context);
-        }
-      else
-        gdk_quartz_drawable_release_context (GDK_WINDOW_OBJECT (window)->impl, context);
+      release_context (window, context);
 
       return;
     }
@@ -873,13 +869,13 @@ draw_box (GtkStyle      *style,
 
       draw_info.trackInfo.slider.thumbDir = kThemeThumbPlain;
 
-      context = get_context (GDK_WINDOW_OBJECT (window)->impl, area);
+      context = get_context (window, area);
       if (!context)
         return;
 
       HIThemeDrawTrack (&draw_info, NULL, context, kHIThemeOrientationNormal);
 
-      gdk_quartz_drawable_release_context (GDK_WINDOW_OBJECT (window)->impl, context);
+      release_context (window, context);
 
       return;
     }
@@ -933,13 +929,13 @@ draw_box (GtkStyle      *style,
 
       //draw_info.trackInfo.slider.thumbDir = kThemeThumbPlain;
 
-      context = get_context (GDK_WINDOW_OBJECT (window)->impl, area);
+      context = get_context (window, area);
       if (!context)
         return;
 
       HIThemeDrawTrack (&draw_info, NULL, context, kHIThemeOrientationNormal);
 
-      gdk_quartz_drawable_release_context (GDK_WINDOW_OBJECT (window)->impl, context);
+      release_context (window, context);
 
       return;
     }
@@ -1008,7 +1004,7 @@ draw_check (GtkStyle      *style,
 
       rect = CGRectMake (x, y+1, width, height);
 
-      context = get_context (GDK_WINDOW_OBJECT (window)->impl, area);
+      context = get_context (window, area);
       if (!context)
         return;
 
@@ -1018,7 +1014,7 @@ draw_check (GtkStyle      *style,
                          kHIThemeOrientationNormal,
                          NULL);
 
-      gdk_quartz_drawable_release_context (GDK_WINDOW_OBJECT (window)->impl, context);
+      release_context (window, context);
 
       return;
     }
@@ -1072,7 +1068,7 @@ draw_option (GtkStyle      *style,
 
       rect = CGRectMake (x, y, width, height);
 
-      context = get_context (GDK_WINDOW_OBJECT (window)->impl, area);
+      context = get_context (window, area);
       if (!context)
         return;
 
@@ -1082,7 +1078,7 @@ draw_option (GtkStyle      *style,
                          kHIThemeOrientationNormal,
                          NULL);
 
-      gdk_quartz_drawable_release_context (GDK_WINDOW_OBJECT (window)->impl, context);
+      release_context (window, context);
 
       return;
     }
@@ -1151,11 +1147,12 @@ draw_extension (GtkStyle        *style,
       HIThemeTabDrawInfo draw_info;
       CGContextRef context;
 
-      context = get_context (GDK_WINDOW_OBJECT (window)->impl, area);
+      context = get_context (window, area);
       if (!context)
         return;
 
-      rect = CGRectMake (x, y, width, height);
+      /* -1 to get the text label centered vertically. */
+      rect = CGRectMake (x, y-1, width, height);
 
       draw_info.version = 1;
       draw_info.direction = kThemeTabNorth;
@@ -1201,7 +1198,7 @@ draw_extension (GtkStyle        *style,
                       kHIThemeOrientationNormal,
                       &out_rect);
 
-      gdk_quartz_drawable_release_context (GDK_WINDOW_OBJECT (window)->impl, context);
+      release_context (window, context);
     }
 
 #if 0
@@ -1273,13 +1270,13 @@ draw_flat_box (GtkStyle      *style,
       draw_info.version = 0;
       draw_info.state = kThemeStateActive;
 
-      context = get_context (GDK_WINDOW_OBJECT (window)->impl, area);
+      context = get_context (window, area);
       if (!context)
         return;
 
       HIThemeDrawPlacard (&rect, &draw_info, context, kHIThemeOrientationNormal);
 
-      gdk_quartz_drawable_release_context (GDK_WINDOW_OBJECT (window)->impl, context);
+      release_context (window, context);
 
       return;
     }
@@ -1299,20 +1296,13 @@ draw_flat_box (GtkStyle      *style,
 
       rect = CGRectMake (x - 2, y - 1, width + 4, height + 4);
 
-      if (GDK_IS_PIXMAP (window))
-        context = get_context (GDK_PIXMAP_OBJECT (window)->impl, area);
-      else
-        context = get_context (GDK_WINDOW_OBJECT (window)->impl, area);
-
+      context = get_context (window, area);
       if (!context)
         return;
 
       HIThemeDrawPlacard (&rect, &placard_info, context, kHIThemeOrientationNormal);
 
-      if (GDK_IS_PIXMAP (window))
-        gdk_quartz_drawable_release_context (GDK_PIXMAP_OBJECT (window)->impl, context);
-      else
-        gdk_quartz_drawable_release_context (GDK_WINDOW_OBJECT (window)->impl, context);
+      release_context (window, context);
 
       return;
     }
@@ -1401,7 +1391,7 @@ draw_shadow (GtkStyle      *style,
 
           rect = CGRectMake (x+1, y+1, width-2, height-2);
 
-          context = get_context (GDK_WINDOW_OBJECT (window)->impl, area);
+          context = get_context (window, area);
           if (!context)
             return;
 
@@ -1413,7 +1403,7 @@ draw_shadow (GtkStyle      *style,
           if (GTK_WIDGET_HAS_FOCUS (widget))
             HIThemeDrawFocusRect (&rect, true, context, kHIThemeOrientationNormal);
 
-          gdk_quartz_drawable_release_context (GDK_WINDOW_OBJECT (window)->impl, context);
+          release_context (window, context);
         }
 
       return;
@@ -1496,7 +1486,7 @@ draw_hline (GtkStyle     *style,
       gdk_window_get_size (toplevel->window, &width, &height);
       menu_rect = CGRectMake (0, 0, width, height);
 
-      context = get_context (GDK_WINDOW_OBJECT (window)->impl, area);
+      context = get_context (window, area);
       if (!context)
         return;
 
@@ -1506,7 +1496,7 @@ draw_hline (GtkStyle     *style,
                                 context,
                                 kHIThemeOrientationNormal);
 
-      gdk_quartz_drawable_release_context (GDK_WINDOW_OBJECT (window)->impl, context);
+      release_context (window, context);
 
       return;
     }
@@ -1604,7 +1594,7 @@ draw_handle (GtkStyle       *style,
 
       rect = CGRectMake (x, y, width, height);
 
-      context = get_context (GDK_WINDOW_OBJECT (window)->impl, area);
+      context = get_context (window, area);
       if (!context)
         return;
 
@@ -1615,7 +1605,7 @@ draw_handle (GtkStyle       *style,
                                kHIThemeOrientationNormal :
                                kHIThemeOrientationInverted);
 
-      gdk_quartz_drawable_release_context (GDK_WINDOW_OBJECT (window)->impl, context);
+      release_context (window, context);
 
       return;
     }
@@ -1639,7 +1629,7 @@ draw_focus (GtkStyle     *style,
   CGRect rect;
   CGContext context;
 
-  context = get_context (GDK_WINDOW_OBJECT (window)->impl, area);
+  context = get_context (window, area);
   if (!context)
     return;
 
@@ -1648,7 +1638,7 @@ draw_focus (GtkStyle     *style,
 
   HIThemeDrawFocusRect (&rect, TRUE, context, kHIThemeOrientationNormal);
 
-  gdk_quartz_drawable_release_context (GDK_WINDOW_OBJECT (window)->impl, context);
+  release_context (window, context);
 #endif
 }
 

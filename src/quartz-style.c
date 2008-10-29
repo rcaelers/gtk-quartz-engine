@@ -653,18 +653,22 @@ draw_box (GtkStyle      *style,
       bg_draw_info.version = 0;
       bg_draw_info.state = kThemeStateActive;
 
-      /* We paint the Rect with a shift of 10 pixels on both sides to avoid round borders */
+      /* We paint the Rect with a shift of 10 pixels on both sides to avoid
+       * round borders.
+       */
       rect = CGRectMake (x-10, y, width+20, 22);
 
-      /* FIXME?: We shift one pixel to avoid the grey border */
+      /* FIXME?: We shift one pixel to avoid the grey border. */
       bg_rect = CGRectMake (x-1, y-1, width+2, height+2);
 
       context = get_context (window, area);
       if (!context)
         return;
 
-      /* We fill the whole area with the background since the menubar has a fixed height
-         of 22 pixels, screw people with more than one text line in menubars */
+      /* We fill the whole area with the background since the menubar has a
+       * fixed height of 22 pixels. Ignore people with more than one text
+       * line in menubars.
+       */
       HIThemeDrawPlacard (&bg_rect, &bg_draw_info, context, kHIThemeOrientationNormal);
       HIThemeDrawMenuBarBackground (&rect, &draw_info, context, kHIThemeOrientationNormal);
 
@@ -704,12 +708,15 @@ draw_box (GtkStyle      *style,
       CGContextRef context;
       GtkWidget *toplevel;
 
-      // FIXME: For toplevel menuitems, we should probably use HIThemeDrawMenuTitle().
+      /* FIXME: For toplevel menuitems, we should probably use
+       * HIThemeDrawMenuTitle().
+       */
 
       draw_info.version = 0;
       draw_info.itemType = kThemeMenuItemPlain;
-      // FIXME: We need to OR the type with different values depending
-      // on the type (option menu, etc), if it has an icon, etc.
+      /* FIXME: We need to OR the type with different values depending on
+       * the type (option menu, etc), if it has an icon, etc.
+       */
       draw_info.itemType |= kThemeMenuItemPopUpBackground;
 
       if (state_type == GTK_STATE_INSENSITIVE)
@@ -982,7 +989,7 @@ draw_check (GtkStyle      *style,
       draw_info.kind = kThemeCheckBox;
       draw_info.adornment = kThemeAdornmentNone;
 
-      // FIXME: might want this? kThemeAdornmentDrawIndicatorOnly
+      /* FIXME: might want this? kThemeAdornmentDrawIndicatorOnly */
 
       if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget)))
         draw_info.value = kThemeButtonOn;
@@ -1643,16 +1650,16 @@ draw_focus (GtkStyle     *style,
 }
 
 static void
-draw_layout (GtkStyle        *style,
-             GdkWindow       *window,
-             GtkStateType     state_type,
-             gboolean         use_text,
-             GdkRectangle    *area,
-             GtkWidget       *widget,
-             const gchar     *detail,
-             gint             x,
-             gint             y,
-             PangoLayout     *layout)
+draw_layout (GtkStyle     *style,
+             GdkWindow    *window,
+             GtkStateType  state_type,
+             gboolean      use_text,
+             GdkRectangle *area,
+             GtkWidget    *widget,
+             const gchar  *detail,
+             gint          x,
+             gint          y,
+             PangoLayout  *layout)
 {
   DEBUG_DRAW;
 
@@ -1672,7 +1679,8 @@ draw_layout (GtkStyle        *style,
 }
 
 static void
-quartz_style_init_from_rc (GtkStyle * style, GtkRcStyle * rc_style)
+quartz_style_init_from_rc (GtkStyle   *style,
+                           GtkRcStyle *rc_style)
 {
   style_setup_system_font (style);
 
@@ -1750,13 +1758,13 @@ quartz_style_realize (GtkStyle *style)
 }
 
 static void
-quartz_style_unrealize (GtkStyle * style)
+quartz_style_unrealize (GtkStyle *style)
 {
   parent_class->unrealize (style);
 }
 
 static void
-quartz_style_class_init (QuartzStyleClass * klass)
+quartz_style_class_init (QuartzStyleClass *klass)
 {
   GtkStyleClass *style_class = GTK_STYLE_CLASS (klass);
 
@@ -1789,7 +1797,7 @@ quartz_style_class_init (QuartzStyleClass * klass)
 GType quartz_type_style = 0;
 
 void
-quartz_style_register_type (GTypeModule * module)
+quartz_style_register_type (GTypeModule *module)
 {
   static const GTypeInfo object_info = {
     sizeof (QuartzStyleClass),

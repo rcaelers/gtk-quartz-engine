@@ -203,8 +203,8 @@ style_setup_rc_styles (void)
    */
   RC_WIDGET_CLASS ("quartz-entry", "*Entry*",
                    "GtkWidget::interior-focus = 0\n"
-                   "GtkWidget::focus-line-width = 1\n"
-                   "GtkEntry::inner-border = { 4, 4, 4, 3 }\n"
+                   "GtkWidget::focus-line-width = 2\n"
+                   "GtkEntry::inner-border = { 3, 3, 3, 2 }\n"
                    "%s", "");
 
   /* SpinButton. FIXME: This needs tweaking, the arrow part is cut off
@@ -273,9 +273,8 @@ get_context (GdkDrawable  *drawable,
     return NULL;
 
   if (area)
-    {
-      /* FIXME: clip */
-    }
+    CGContextClipToRect (context, CGRectMake (area->x, area->y,
+                                              area->width, area->height));
 
   return context;
 }
@@ -1129,69 +1128,9 @@ draw_extension (GtkStyle        *style,
 {
   DEBUG_DRAW;
 
-  if (widget && GTK_IS_NOTEBOOK (widget) && IS_DETAIL (detail, "tab"))
-    {
-      HIRect rect, out_rect;
-      HIThemeTabDrawInfo draw_info;
-      CGContextRef context;
-
-      /* bool first, last;
-         gint border_width; */
-
-      if (height > 22 &&
-          (gap_side == GTK_POS_RIGHT || gap_side == GTK_POS_LEFT))
-        rect = CGRectMake (x, y + height/2 - 22/2, width, height);
-      else
-        rect = CGRectMake (x, y, width, height);
-
-      context = get_context (GDK_WINDOW_OBJECT (window)->impl, area);
-      if (!context)
-        return;
-
-      draw_info.version = 1;
-      draw_info.direction = kThemeTabNorth;
-      draw_info.size = kHIThemeTabSizeNormal;
-      draw_info.adornment = kHIThemeTabAdornmentNone;
-      draw_info.kind = kHIThemeTabKindNormal;
-
-      if (state_type == GTK_STATE_ACTIVE)
-        draw_info.style = kThemeTabNonFront;
-      else if (state_type == GTK_STATE_INSENSITIVE)
-        draw_info.style = kThemeTabNonFrontInactive;
-      else
-        draw_info.style = kThemeTabFront;
-
-      /* TODO: figure out the last one and take thickness into account
-
-         border_width = gtk_container_get_border_width (GTK_CONTAINER (widget));
-         first = widget->allocation.x == x + border_width;
-         last = FALSE;
-
-         if (first && last)
-         draw_info.position = kHIThemeTabPositionFirst;
-         else if (first)
-         draw_info.position = kHIThemeTabPositionFirst;
-         else if (last)
-         draw_info.position = kHIThemeTabPositionLast;
-         else
-         draw_info.position = kHIThemeTabPositionMiddle;*/
-
-      draw_info.position = kHIThemeTabPositionOnly;
-
-      HIThemeDrawTab (&rect,
-                      &draw_info,
-                      context,
-                      kHIThemeOrientationNormal,
-                      &out_rect);
-
-      gdk_quartz_drawable_release_context (GDK_WINDOW_OBJECT (window)->impl, context);
-    }
-
-#if 0
   parent_class->draw_extension (style, window, state_type,
                                 shadow_type, area, widget, detail,
                                 x, y, width, height, gap_side);
-#endif
 }
 
 static void
@@ -1260,43 +1199,7 @@ draw_flat_box (GtkStyle      *style,
       if (!context)
         return;
 
-      /* Is this really the right method? It seems to work though. */
       HIThemeDrawPlacard (&rect, &draw_info, context, kHIThemeOrientationNormal);
-
-      gdk_quartz_drawable_release_context (GDK_WINDOW_OBJECT (window)->impl, context);
-
-      return;
-    }
-  else if (IS_DETAIL (detail, "entry_bg"))
-    {
-      CGContextRef context;
-      HIRect rect;
-      HIThemeFrameDrawInfo draw_info;
-      gint line_width;
-
-      draw_info.version = 0;
-      draw_info.kind = kHIThemeFrameTextFieldSquare;
-      if (state_type == GTK_STATE_INSENSITIVE)
-        draw_info.state = kThemeStateInactive;
-      else
-        draw_info.state = kThemeStateActive;
-      draw_info.isFocused = GTK_WIDGET_HAS_FOCUS (widget);
-
-      gtk_widget_style_get (widget,
-                            "focus-line-width", &line_width,
-                            NULL);
-
-      rect = CGRectMake (x + line_width, y + line_width,
-                         width - 2 * line_width, height - 2 * line_width);
-
-      context = get_context (GDK_WINDOW_OBJECT (window)->impl, area);
-      if (!context)
-        return;
-
-      HIThemeDrawFrame (&rect,
-                        &draw_info,
-                        context,
-                        kHIThemeOrientationNormal);
 
       gdk_quartz_drawable_release_context (GDK_WINDOW_OBJECT (window)->impl, context);
 
@@ -1340,28 +1243,15 @@ draw_flat_box (GtkStyle      *style,
       /* We don't want any background, no prelight etc. */
       return;
     }
-  else if (IS_DETAIL (detail, "cell_even"))
+  else if (IS_DETAIL (detail, "cell_even") || IS_DETAIL (detail, "cell_odd"))
     {
-#if 0
-      CGContextRef context;
-      HIRect rect;
-
-      rect = CGRectMake (x, y, width, height);
-
-      context = get_context (GDK_WINDOW_OBJECT (window)->impl, area);
-      if (!context)
-        return;
-
-      /* FIXME: Draw... */
-
-      gdk_quartz_drawable_release_context (GDK_WINDOW_OBJECT (window)->impl, context);
-
+      /* FIXME: Should draw using HITheme, or get the right selection
+       * color.
+       */
+      parent_class->draw_flat_box (style, window, state_type, shadow_type,
+                                   area, widget, detail, x, y, width, height);
       return;
-#endif
     }
-
-  parent_class->draw_flat_box (style, window, state_type, shadow_type,
-                               area, widget, detail, x, y, width, height);
 }
 
 static void
@@ -1398,9 +1288,12 @@ draw_shadow (GtkStyle      *style,
 
   sanitize_size (window, &width, &height);
 
-  /* Handle shawod in and etched in for scrolled window. */
+  /* Handle shadow in and etched in for scrolled windows, frames and
+   * entries.
+   */
   if ((GTK_IS_SCROLLED_WINDOW (widget) && IS_DETAIL (detail, "scrolled_window")) ||
-      (GTK_IS_FRAME (widget) && IS_DETAIL (detail, "frame")))
+      (GTK_IS_FRAME (widget) && IS_DETAIL (detail, "frame")) ||
+      (GTK_IS_ENTRY (widget) && IS_DETAIL (detail, "entry")))
     {
       GtkShadowType shadow_type = GTK_SHADOW_NONE;
 
@@ -1408,28 +1301,27 @@ draw_shadow (GtkStyle      *style,
         shadow_type = gtk_scrolled_window_get_shadow_type (GTK_SCROLLED_WINDOW (widget));
       else if (GTK_IS_FRAME (widget))
         shadow_type = gtk_frame_get_shadow_type (GTK_FRAME (widget));
+      else if (GTK_IS_ENTRY (widget))
+        shadow_type = GTK_SHADOW_IN;
 
       if (shadow_type == GTK_SHADOW_IN || shadow_type == GTK_SHADOW_ETCHED_IN)
         {
-          GtkWidget *child = NULL;
           CGContextRef context;
           HIRect rect;
           HIThemeFrameDrawInfo draw_info;
 
-          child = gtk_bin_get_child (GTK_BIN (widget));
-
           draw_info.version = 0;
-          if (child && GTK_IS_TEXT_VIEW (child))
-            draw_info.kind = kHIThemeFrameTextFieldSquare;
-          else
-            draw_info.kind = kHIThemeFrameListBox;
+          /* Could use ListBox for treeviews, but textframe looks good. */
+          draw_info.kind = kHIThemeFrameTextFieldSquare;
+
           if (state_type == GTK_STATE_INSENSITIVE)
             draw_info.state = kThemeStateInactive;
           else
             draw_info.state = kThemeStateActive;
+
           draw_info.isFocused = GTK_WIDGET_HAS_FOCUS (widget);
 
-          rect = CGRectMake (x, y, width, height);
+          rect = CGRectMake (x+1, y+1, width-2, height-2);
 
           context = get_context (GDK_WINDOW_OBJECT (window)->impl, area);
           if (!context)
@@ -1440,37 +1332,15 @@ draw_shadow (GtkStyle      *style,
                             context,
                             kHIThemeOrientationNormal);
 
+          if (GTK_WIDGET_HAS_FOCUS (widget))
+            HIThemeDrawFocusRect (&rect, true, context, kHIThemeOrientationNormal);
+
           gdk_quartz_drawable_release_context (GDK_WINDOW_OBJECT (window)->impl, context);
         }
 
       return;
     }
 
-  else if (IS_DETAIL (detail, "entry"))
-    {
-      CGContextRef context;
-      HIRect rect;
-      HIThemePlacardDrawInfo placard_info;
-
-      /* Draw the background texture to paint over the white base
-       * background that the entry draws.
-       */
-
-      placard_info.version = 0;
-      placard_info.state = kThemeStateActive;
-
-      rect = CGRectMake (x - 1, y - 1, width + 2, height + 2);
-
-      context = get_context (GDK_WINDOW_OBJECT (window)->impl, area);
-      if (!context)
-        return;
-
-      HIThemeDrawPlacard (&rect, &placard_info, context, kHIThemeOrientationNormal);
-
-      gdk_quartz_drawable_release_context (GDK_WINDOW_OBJECT (window)->impl, context);
-
-      return;
-    }
   else if (GTK_IS_SCALE (widget))
     return; /* Ignore. */
 

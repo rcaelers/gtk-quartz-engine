@@ -1667,7 +1667,7 @@ draw_layout (GtkStyle        *style,
     }
 
   parent_class->draw_layout (style, window, state_type, use_text,
-                             NULL, NULL, NULL,
+                             area, widget, detail,
                              x, y, layout);
 }
 

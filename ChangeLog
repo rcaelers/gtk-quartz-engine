@@ -1,5 +1,10 @@
 2008-10-29  Richard Hult  <richard@imendio.com>
 
+	* src/quartz-style.c: (draw_layout): Add missing paramenters for
+	area, widget, etc. Fixes missing clipping of text.
+
+2008-10-29  Richard Hult  <richard@imendio.com>
+
 	* src/quartz-style.c: Change get_context so it takes the window
 	and handle pixmaps as well. Remove the special cases since they
 	are not needed anymore. Add release_context and do the same

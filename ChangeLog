@@ -1,3 +1,11 @@
+2008-10-30  Richard Hult  <richard@imendio.com>
+
+	* src/quartz-style.c (is_icon_only_button, draw_box): Remove the
+	heuristics that tried to decide if a square or aqua button should
+	be used depending on the size. It needs to be improved before it's
+	enabled again. Use square buttons for image only buttons in the
+	meantime.
+
 2008-10-29  Richard Hult  <richard@imendio.com>
 
 	* src/quartz-style.c: Minor style cleanups.

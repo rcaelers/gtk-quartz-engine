@@ -416,15 +416,28 @@ is_path_bar_button (GtkWidget *widget)
 }
 
 /* Checks if the button is displaying just an icon and no text, used to
- * decide whether to show a square or aqua button. FIXME: Implement.
+ * decide whether to show a square or aqua button.
  */
 static gboolean
 is_icon_only_button (GtkWidget *widget)
 {
+  GtkWidget *child;
+
   if (!GTK_IS_BUTTON (widget))
     return FALSE;
 
-  /* FIXME: implement. */
+  child = gtk_bin_get_child (GTK_BIN (widget));
+
+  /* Very simplistic checks, could be made a bit smarter. */
+  if (GTK_IS_IMAGE (child))
+    return TRUE;
+
+  if (GTK_IS_ALIGNMENT (child))
+    {
+      child = gtk_bin_get_child (GTK_BIN (child));
+      if (GTK_IS_IMAGE (child))
+        return TRUE;
+    }
 
   return FALSE;
 }
@@ -586,16 +599,20 @@ draw_box (GtkStyle      *style,
         }
       else /* Normal button. */
         {
-          ThemeButtonKind kind;
+          ThemeButtonKind kind = kThemePushButtonNormal;
 
           if (is_path_bar_button (widget) || is_icon_only_button (widget))
             {
               kind = kThemeBevelButton;
             }
-          else
+          /* FIXME: Disabled for now. We still need it, but could do
+           * something like checking the size using HITheme API and if our
+           * button doesn't fit, use a square one.
+           */ 
+          else if (0)
             {
               gdouble ratio;
-              int     max_height = 35; /* FIXME: This should be calculated somehow. */
+              int max_height = 35; /* FIXME: This should be calculated somehow. */
 
               /* Use weird heuristics for now... */
               ratio = (gdouble) height / (gdouble) width;
@@ -1166,6 +1183,15 @@ draw_extension (GtkStyle        *style,
       draw_info.size = kHIThemeTabSizeNormal;
       draw_info.adornment = kHIThemeTabAdornmentTrailingSeparator;
       draw_info.kind = kHIThemeTabKindNormal;
+
+#if 0
+      /* This is something that we should do but first we have to make GTK+
+       * invalidate the entire window when losing focus. Split the test out
+       * and share it in all drawing functions.
+       */
+      if (!gtk_window_has_toplevel_focus (GTK_WINDOW (gtk_widget_get_toplevel (widget))))
+        ...
+#endif
 
       if (state_type == GTK_STATE_ACTIVE)
         draw_info.style = kThemeTabNonFront;

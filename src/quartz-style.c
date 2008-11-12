@@ -526,11 +526,6 @@ draw_box (GtkStyle      *style,
       if (GTK_WIDGET_HAS_FOCUS (widget))
         draw_info.adornment |= kThemeAdornmentFocus;
 
-      /* FIXME: We should make the button "greyed out" when the window
-       * doesn't have focus, but I can't see how it can be done (it's not
-       * the same as insensitive).
-       */
-
       gtk_widget_style_get (widget,
                             "focus-line-width", &line_width,
                             NULL);

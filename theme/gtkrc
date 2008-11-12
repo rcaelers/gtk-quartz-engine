@@ -32,8 +32,6 @@ style "quartz-default"
 
   GtkComboBox::appears-as-list = 0
   GtkComboBox::focus-on-click = 0
-  GtkComboBox::arrow-size = 0
-  GtkComboBox::shadow-type = none
 
   GtkNotebook::tab-curvature = 4
   GtkNotebook::tab-overlap = 0
@@ -59,8 +57,6 @@ style "quartz-toolbar"
 {
   xthickness = 3
   ythickness = 3
-
-  engine "quartz" {}
 }
 widget_class "*Toolbar*" style "quartz-toolbar"
 
@@ -68,8 +64,6 @@ style "quartz-frame"
 {
   xthickness = 2
   ythickness = 2
-
-  engine "quartz" {}
 }
 widget_class "*.<GtkFrame>" style "quartz-frame"
 
@@ -77,7 +71,5 @@ style "quartz-scrolled-window"
 {
   xthickness = 2
   ythickness = 2
-
-  engine "quartz" {}
 }
 widget_class "*.<GtkScrolledWindow>" style "quartz-scrolled-window"

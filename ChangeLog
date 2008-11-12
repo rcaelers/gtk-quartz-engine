@@ -12,7 +12,7 @@
 
 2008-10-29  Richard Hult  <richard@imendio.com>
 
-	* src/quartz-style.c: (draw_layout): Add missing paramenters for
+	* src/quartz-style.c: (draw_layout): Add missing parameters for
 	area, widget, etc. Fixes missing clipping of text.
 
 2008-10-29  Richard Hult  <richard@imendio.com>

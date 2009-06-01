@@ -1,6 +1,7 @@
 /* GTK+ theme engine for the Quartz backend
  *
  * Copyright (C) 2007-2008 Imendio AB
+ * Copyright (C) 2009 Rob Caelers
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -834,9 +835,20 @@ draw_box (GtkStyle      *style,
       draw_info.min = 0;
       draw_info.max = 100;
       draw_info.value = gtk_progress_bar_get_fraction (GTK_PROGRESS_BAR (widget)) * 100;
-      draw_info.attributes = kThemeTrackHorizontal;
       draw_info.trackInfo.progress.phase = 0; /* for indeterminate ones */
 
+      switch (gtk_progress_bar_get_orientation (GTK_PROGRESS_BAR (widget)))
+        {
+        case GTK_PROGRESS_LEFT_TO_RIGHT:
+        case GTK_PROGRESS_RIGHT_TO_LEFT:
+          draw_info.attributes = kThemeTrackHorizontal;
+          break;
+          
+        default:
+          draw_info.attributes = 0;
+          break;
+        }
+      
       context = get_context (window, area);
       if (!context)
         return;

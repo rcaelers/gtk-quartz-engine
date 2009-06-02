@@ -233,6 +233,11 @@ style_setup_rc_styles (void)
                    "ythickness = 2\n"
                    "%s", "");
 
+  RC_WIDGET_CLASS ("quartz-optionmenu", "*GtkOptionMenu*",
+                   "xthickness = 6\n"
+                   "ythickness = 2\n"
+                   "%s", "");
+
   /* ProgressBar. */
   RC_WIDGET_CLASS ("quartz-progressbar", "*ProgressBar*",
                    "font_name = \"%s\"\n",
@@ -504,7 +509,8 @@ draw_box (GtkStyle      *style,
 
       return;
     }
-  else if (GTK_IS_TOGGLE_BUTTON (widget) && is_combo_box_child (widget))
+  else if ( (GTK_IS_TOGGLE_BUTTON (widget) && is_combo_box_child (widget)) ||
+            (IS_DETAIL (detail, "optionmenu")) )
     {
       /* FIXME: Support GtkComboBoxEntry too (using kThemeComboBox). */
       CGContextRef context;
@@ -543,7 +549,7 @@ draw_box (GtkStyle      *style,
                          context,
                          kHIThemeOrientationNormal,
                          NULL);
-
+      
       release_context (window, context);
 
       return;

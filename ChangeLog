@@ -1,3 +1,18 @@
+2009-06-02  Rob Caelers <robc@krandor.nl>
+
+	* src/quartz-style.c (draw_box): Add support for the (now
+	obsolete) Gtk::OptionMenu
+
+2009-06-01  Rob Caelers <robc@krandor.nl>
+
+	* src/quartz-style.c (draw_box): Add support for vertical progress
+	bars.
+
+2009-06-01  Rob Caelers <robc@krandor.nl>
+
+	* .gitignore:
+	* src/.gitignore: Add .git ignore files.
+
 2008-10-30  Richard Hult  <richard@imendio.com>
 
 	* src/quartz-style.c (is_icon_only_button, draw_box): Remove the

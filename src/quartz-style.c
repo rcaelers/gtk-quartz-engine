@@ -1056,6 +1056,61 @@ draw_check (GtkStyle      *style,
 
       return;
     }
+  else if (IS_DETAIL (detail, "cellcheck"))
+    {
+      CGContextRef context;
+      HIRect rect;
+      HIThemeButtonDrawInfo draw_info;
+
+      // FIXME: check if this can be merged with detail==checkbutton
+      
+      draw_info.version = 0;
+      draw_info.kind = kThemeCheckBox;
+      draw_info.adornment = kThemeAdornmentNone;
+
+      draw_info.value = kThemeButtonOff;
+      draw_info.state = kThemeStateActive;
+
+      if (shadow_type == GTK_SHADOW_IN)
+        {
+          draw_info.value = kThemeButtonOn;
+        }
+      
+      switch (state_type)
+        {
+        case GTK_STATE_INSENSITIVE:
+          draw_info.state = kThemeStateInactive;
+          break;
+          
+        case GTK_STATE_SELECTED:
+          draw_info.state = kThemeStatePressed;
+          draw_info.adornment |= kThemeAdornmentFocus;
+          break;
+            
+        case GTK_STATE_ACTIVE:
+          draw_info.state = kThemeStatePressed;
+          break;
+
+        default:
+          break;
+        }
+
+      rect = CGRectMake (x, y+1, width, height);
+
+      context = get_context (window, area);
+      if (!context)
+        return;
+
+      HIThemeDrawButton (&rect,
+                         &draw_info,
+                         context,
+                         kHIThemeOrientationNormal,
+                         NULL);
+
+      release_context (window, context);
+
+      return;
+    }
 }
 
 static void

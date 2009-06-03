@@ -182,7 +182,7 @@ style_setup_rc_styles (void)
              "Lucida Grande 9");
 
   /* TreeView column header (button). */
-  RC_WIDGET_CLASS ("quartz-tree-header", "*.GtkTreeView.*Button*",
+  RC_WIDGET_CLASS ("quartz-tree-header", "*.*GtkTreeView*.*Button*",
                    "font_name = \"%s\"\n"
                    "GtkWidget::focus-line-width = 0\n"
                    "GtkWidget::draw-border = { 1, 1, 1, 1 }\n"
@@ -233,6 +233,7 @@ style_setup_rc_styles (void)
                    "ythickness = 2\n"
                    "%s", "");
 
+  /* OptionMenu. */
   RC_WIDGET_CLASS ("quartz-optionmenu", "*GtkOptionMenu*",
                    "xthickness = 6\n"
                    "ythickness = 2\n"

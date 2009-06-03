@@ -1,3 +1,9 @@
+2009-06-03  Rob Caelers <robc@krandor.nl>
+
+	* src/quartz-style.c (draw_box): Fix font size for Gtkmm TreeView
+	widget (widget is called gtkm__GtkTreeView and was not matched by
+	style rules).
+
 2009-06-02  Rob Caelers <robc@krandor.nl>
 
 	* src/quartz-style.c (draw_box): Add support for the (now
